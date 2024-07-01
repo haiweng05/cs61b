@@ -1,10 +1,6 @@
 import java.util.function.ToDoubleFunction;
 
 public class NBody {
-    public static int readN(String path) {
-        In in = new In(path);
-        return in.readInt();
-    }
     public static double readRadius(String path) {
         In in = new In(path);
         in.readInt();
@@ -34,9 +30,9 @@ public class NBody {
         double T = Double.parseDouble(argv[0]);
         double dt = Double.parseDouble(argv[1]);
         String filename = argv[2];
-        int N = readN(filename);
         double R = readRadius(filename);
         Planet[] planets = readPlanets(filename); 
+        int N = planets.length;
 
         StdDraw.setScale(-R,R);
         StdDraw.clear();
@@ -65,7 +61,7 @@ public class NBody {
             StdDraw.picture(0, 0, "images/starfield.jpg");
             
             for(int i = 0; i < N; ++ i){
-                StdDraw.picture(planets[i].xxPos,planets[i].yyPos,"images/" + planets[i].imgFileName);
+                planets[i].draw();
             }
             StdDraw.show();
             StdDraw.pause(10);
