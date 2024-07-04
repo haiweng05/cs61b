@@ -1,6 +1,6 @@
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
-	/* Utility method for printing out empty checks. */
+	/** Utility method for printing out empty checks. */
 	public static boolean checkEmpty(boolean expected, boolean actual) {
 		if (expected != actual) {
 			System.out.println("isEmpty() returned " + actual + ", but expected: " + expected);
@@ -64,19 +64,34 @@ public class LinkedListDequeTest {
 
 		System.out.println("Running add/remove test.");
 
-		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
-		// should be empty 
-		boolean passed = checkEmpty(true, lld1.isEmpty());
+		boolean pass = true;
 
-		lld1.addFirst(10);
-		// should not be empty 
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
+		LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+		for (int i = 0; i < 1000; ++ i) {
+			lld.addLast(i);
+		}
 
-		lld1.removeFirst();
-		// should be empty 
-		passed = checkEmpty(true, lld1.isEmpty()) && passed;
+		lld.removeFirst();
 
-		printTestStatus(passed);
+		pass = (lld.get(0).equals(1)) && pass;
+		pass = (lld.size() == 999) && pass;
+
+		if (pass) {
+			System.out.println("addRemoveTest1 passed!");
+		}
+
+		for (int i = 0; i < 1000; ++ i) {
+			lld.addFirst(i);
+		}
+
+		lld.removeLast();
+
+		pass = (lld.get(1997).equals(998)) && pass;
+		pass = (lld.get(0).equals(999)) && pass;
+
+		if (pass) {
+			System.out.println("addRemoveTest2 passed!");
+		}
 	}
 
 	public static void getTest() {

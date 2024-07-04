@@ -1,34 +1,34 @@
 public class ArrayDeque<T> {
     private T[] val;
     private int size;
-    private int max_size;
+    private int maxSize;
     private int begin;
 
 
-    ArrayDeque() {
-        max_size = 8;
+    public ArrayDeque() {
+        maxSize = 8;
         size = 0;
         begin = 0;
-        val = (T[]) new Object[max_size];
+        val = (T[]) new Object[maxSize];
     }
 
     private int indexBefore(int index) {
         if (index == 0) {
-            return max_size - 1;
+            return maxSize - 1;
         }
 
         return index - 1;
     }
 
     private int indexAfter(int index) {
-        if (index == max_size - 1) {
+        if (index == maxSize - 1) {
             return 0;
         }
         return index + 1;
     }
 
     private int indexBack() {
-        return (begin + size - 1) % max_size;
+        return (begin + size - 1) % maxSize;
     }
 
     public int size() {
@@ -46,20 +46,20 @@ public class ArrayDeque<T> {
         }
     }
 
-    public void resize(int newSize) {
-        T[] new_array = (T[]) new Object[newSize];
+    private void resize(int newSize) {
+        T[] newArray = (T[]) new Object[newSize];
         for (int i = begin, cnt = 0; cnt < size; ++cnt, i = indexAfter(i)) {
-            new_array[cnt] = val[i];
+            newArray[cnt] = val[i];
             val[i] = null;
         }
-        max_size = newSize;
-        val = new_array;
+        maxSize = newSize;
+        val = newArray;
         begin = 0;
     }
 
     public void addLast(T item) {
-        if (size == max_size) {
-            resize(max_size * 2);
+        if (size == maxSize) {
+            resize(maxSize * 2);
         }
 
         val[indexAfter(indexBack())] = item;
@@ -67,14 +67,13 @@ public class ArrayDeque<T> {
     }
 
     public void addFirst(T item) {
-        if (size == max_size) {
-            resize(max_size * 2);
+        if (size == maxSize) {
+            resize(maxSize * 2);
         }
 
         if (val[begin] == null) {
             val[begin] = item;
-        }
-        else {
+        } else {
             begin = indexBefore(begin);
             val[begin] = item;
         }
@@ -82,31 +81,39 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+
         T v = val[begin];
         val[begin] = null;
         begin = indexAfter(begin);
         size--;
 
-        double useage = 1.0d * size / max_size;
-        if(useage <= 0.25d && max_size >= 16) {
-            resize(max_size / 2);
+        double useage = 1.0d * size / maxSize;
+        if (useage <= 0.25d && maxSize >= 16) {
+            resize(maxSize / 2);
         }
         return v;
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
+
         T v = val[indexBack()];
         val[indexBack()] = null;
         size--;
 
-        double useage = 1.0d * size / max_size;
-        if (useage <= 0.25d && max_size >= 16) {
-            resize(max_size / 2);
+        double useage = 1.0d * size / maxSize;
+        if (useage <= 0.25d && maxSize >= 16) {
+            resize(maxSize / 2);
         }
         return v;
     }
 
     public T get(int index) {
-        return val[(begin + index) % max_size];
+        return val[(begin + index) % maxSize];
     }
 }
