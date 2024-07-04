@@ -1,7 +1,7 @@
-public class ArrayDeque<ValueType> {
-    public ValueType[] val;
+public class ArrayDeque<T> {
+    private T[] val;
     private int size;
-    public int max_size;
+    private int max_size;
     private int begin;
 
 
@@ -9,10 +9,10 @@ public class ArrayDeque<ValueType> {
         max_size = 8;
         size = 0;
         begin = 0;
-        val = (ValueType[]) new Object[max_size];
+        val = (T[]) new Object[max_size];
     }
 
-    private int IndexBefore(int index) {
+    private int indexBefore(int index) {
         if (index == 0) {
             return max_size - 1;
         }
@@ -20,14 +20,14 @@ public class ArrayDeque<ValueType> {
         return index - 1;
     }
 
-    private int IndexAfter(int index) {
-        if(index == max_size - 1) {
+    private int indexAfter(int index) {
+        if (index == max_size - 1) {
             return 0;
         }
         return index + 1;
     }
 
-    private int IndexBack() {
+    private int indexBack() {
         return (begin + size - 1) % max_size;
     }
 
@@ -40,33 +40,33 @@ public class ArrayDeque<ValueType> {
     }
 
     public void printDeque() {
-        for (int i = begin, cnt = 0; cnt < size; ++ cnt, i = IndexAfter(i)) {
+        for (int i = begin, cnt = 0; cnt < size; ++cnt, i = indexAfter(i)) {
             System.out.print(val[i]);
             System.out.print(' ');
         }
     }
 
-    public void resize(int new_size) {
-        ValueType[] new_array = (ValueType[]) new Object[new_size];
-        for (int i = begin, cnt = 0; cnt < size; ++ cnt, i = IndexAfter(i)) {
+    public void resize(int newSize) {
+        T[] new_array = (T[]) new Object[newSize];
+        for (int i = begin, cnt = 0; cnt < size; ++cnt, i = indexAfter(i)) {
             new_array[cnt] = val[i];
             val[i] = null;
         }
-        max_size = new_size;
+        max_size = newSize;
         val = new_array;
         begin = 0;
     }
 
-    public void addLast(ValueType item) {
+    public void addLast(T item) {
         if (size == max_size) {
             resize(max_size * 2);
         }
 
-        val[IndexAfter(IndexBack())] = item;
-        size ++;
+        val[indexAfter(indexBack())] = item;
+        size++;
     }
 
-    public void addFirst(ValueType item) {
+    public void addFirst(T item) {
         if (size == max_size) {
             resize(max_size * 2);
         }
@@ -75,17 +75,17 @@ public class ArrayDeque<ValueType> {
             val[begin] = item;
         }
         else {
-            begin = IndexBefore(begin);
+            begin = indexBefore(begin);
             val[begin] = item;
         }
-        size ++;
+        size++;
     }
 
-    public ValueType removeFirst() {
-        ValueType v = val[begin];
+    public T removeFirst() {
+        T v = val[begin];
         val[begin] = null;
-        begin = IndexAfter(begin);
-        size --;
+        begin = indexAfter(begin);
+        size--;
 
         double useage = 1.0d * size / max_size;
         if(useage <= 0.25d && max_size >= 16) {
@@ -94,19 +94,19 @@ public class ArrayDeque<ValueType> {
         return v;
     }
 
-    public ValueType removeLast() {
-        ValueType v = val[IndexBack()];
-        val[IndexBack()] = null;
-        size --;
+    public T removeLast() {
+        T v = val[indexBack()];
+        val[indexBack()] = null;
+        size--;
 
         double useage = 1.0d * size / max_size;
-        if(useage <= 0.25d && max_size >= 16) {
+        if (useage <= 0.25d && max_size >= 16) {
             resize(max_size / 2);
         }
         return v;
     }
 
-    public ValueType get(int index) {
+    public T get(int index) {
         return val[(begin + index) % max_size];
     }
 }

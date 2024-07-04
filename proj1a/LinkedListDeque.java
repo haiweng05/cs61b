@@ -1,25 +1,23 @@
-import com.sun.jdi.Value;
+public class LinkedListDeque<T> {
+    public static class Node<T>{
+        private T _val;
+        private Node<T> prev;
+        private Node<T> next;
 
-public class LinkedListDeque <ValueType> {
-    public static class Node <ValueType>{
-        public ValueType _val;
-        public Node<ValueType> prev;
-        public Node<ValueType> next;
-
-        Node(ValueType val) {
+        Node(T val) {
             _val = val;
         }
 
         Node() {}
     }
 
-    private Node<ValueType> sentinal;
+    private Node<T> sentinal;
     private int size;
-    private Node<ValueType> left;
-    private Node<ValueType> right;
+    private Node<T> left;
+    private Node<T> right;
 
     LinkedListDeque() {
-        sentinal = new Node<ValueType>();
+        sentinal = new Node<T>();
         size = 0;
         sentinal.next = sentinal;
         sentinal.prev = sentinal;
@@ -35,34 +33,34 @@ public class LinkedListDeque <ValueType> {
         return size == 0;
     }
 
-    public void addLast(ValueType item) {
-        Node<ValueType> cur = sentinal;
+    public void addLast(T item) {
+        Node<T> cur = sentinal;
         while (cur.next != left) {
             cur = cur.next;
         }
-        cur.next = new Node<ValueType>(item);
+        cur.next = new Node<T>(item);
         cur.next.prev = cur;
         cur.next.next = left;
         left.prev = cur.next;
         right = right.next;
-        size ++;
+        size++;
     }
 
-    public void addFirst(ValueType item) {
-        Node<ValueType> cur = sentinal;
+    public void addFirst(T item) {
+        Node<T> cur = sentinal;
         while (cur.prev != right) {
             cur = cur.prev;
         }
-        cur.prev = new Node<ValueType>(item);
+        cur.prev = new Node<T>(item);
         cur.prev.next = cur;
         cur.prev.prev = right;
         right.next = cur.prev;
         left = left.prev;
-        size ++;
+        size++;
     }
 
     public void printDeque() {
-        Node<ValueType> iter = left;
+        Node<T> iter = left;
         while (iter.next != left) {
             if (iter._val != null) {
                 System.out.print(iter._val);
@@ -76,35 +74,35 @@ public class LinkedListDeque <ValueType> {
         }
     }
 
-    public ValueType removeLast() {
+    public T removeLast() {
         if (size == 0) {
             return null;
         }
-        ValueType val = right._val;
-        Node<ValueType> before = right.prev;
+        T val = right._val;
+        Node<T> before = right.prev;
         before.next = left;
         left.prev = before;
-        size --;
+        size--;
         return val;
     }
 
-    public ValueType removeFirst() {
+    public T removeFirst() {
         if (size == 0) {
             return null;
         }
-        ValueType val = left._val;
-        Node<ValueType> after = left.next;
+        T val = left._val;
+        Node<T> after = left.next;
         after.prev = right;
         right.next = after;
-        size --;
+        size--;
         return val;
     }
 
-    public ValueType get(int index) {
-        Node<ValueType> iter = left;
-        for (int i = 0; i < index; ++ i) {
+    public T get(int index) {
+        Node<T> iter = left;
+        for (int i = 0; i < index; ++i) {
             if(iter._val == null) {
-                i --;
+                i--;
             }
             iter = iter.next;
         }
@@ -114,11 +112,11 @@ public class LinkedListDeque <ValueType> {
         return iter._val;
     }
 
-    public ValueType getRecursive(int index) {
+    public T getRecursive(int index) {
         return getRecursiveHelper(index, left);
     }
 
-    public ValueType getRecursiveHelper(int index, Node<ValueType> cur) {
+    public T getRecursiveHelper(int index, Node<T> cur) {
         if(cur._val == null) {
             return getRecursiveHelper(index, cur.next);
         }
