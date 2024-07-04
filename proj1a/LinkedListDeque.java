@@ -36,21 +36,19 @@ public class LinkedListDeque<T> {
     }
 
     public void addLast(T item) {
-        Node<T> cur = right;
-        cur.next = new Node<T>(item);
-        cur.next.prev = cur;
-        cur.next.next = left;
-        left.prev = cur.next;
+        right.next = new Node<T>(item);
+        right.next.prev = right;
+        right.next.next = left;
+        left.prev = right.next;
         right = right.next;
         size++;
     }
 
     public void addFirst(T item) {
-        Node<T> cur = left;
-        cur.prev = new Node<T>(item);
-        cur.prev.next = cur;
-        cur.prev.prev = right;
-        right.next = cur.prev;
+        left.prev = new Node<T>(item);
+        left.prev.next = left;
+        left.prev.prev = right;
+        right.next = left.prev;
         left = left.prev;
         size++;
     }
@@ -83,6 +81,12 @@ public class LinkedListDeque<T> {
         pos._val = null;
         pos.prev.next = pos.next;
         pos.next.prev = pos.prev;
+        if (pos == left) {
+            left = left.next;
+        }
+        if (pos == right) {
+            right = right.prev;
+        }
         size--;
         return val;
     }
@@ -100,6 +104,12 @@ public class LinkedListDeque<T> {
         pos._val = null;
         pos.next.prev = pos.prev;
         pos.prev.next = pos.next;
+        if (pos == left) {
+            left = left.next;
+        }
+        if (pos == right) {
+            right = right.prev;
+        }
         size--;
         return val;
     }
