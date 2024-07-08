@@ -23,10 +23,6 @@ public class Game {
     private int curY;
 
     public Game() {
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
-
         // initialize tiles
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -42,6 +38,8 @@ public class Game {
         addWall();
         // draws the world to the screen
         if (mode) {
+            ter = new TERenderer();
+            ter.initialize(WIDTH, HEIGHT);
             ter.renderFrame(world);
         }
     }
@@ -68,15 +66,19 @@ public class Game {
                 continue;
             }
             if (nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1) {
-                if (nx - width / 2 > 0 && ny - height / 2 > 0 && world[nx][ny].equals(Tileset.NOTHING)) {
-                    roomCount += 1;
+                if (nx - width / 2 > 0 && ny - height / 2 > 0) {
+                    if (world[nx][ny].equals(Tileset.NOTHING)) {
+                        roomCount += 1;
 
-                    addPath(x, y, i, length);
+                        addPath(x, y, i, length);
 
-                    addRoom(nx, ny, width, height);
+                        addRoom(nx, ny, width, height);
 
-                    search(nx, ny);
+                        search(nx, ny);
+                    }
                 }
+
+
             }
 
         }
