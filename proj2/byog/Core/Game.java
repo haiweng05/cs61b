@@ -3,7 +3,6 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-import byog.Core.RandomUtils;
 
 import java.util.Random;
 
@@ -16,7 +15,7 @@ public class Game {
     private static final int MINWIDTH = 2;
     private static final int MAXHEIGHT = 6;
     private static final int MINHEIGHT = 2;
-    private static final int[][] bearings = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
+    private static final int[][] BEARINGS = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
     private Random random;
     private TETile[][] world;
     private int roomCount = 0;
@@ -46,7 +45,7 @@ public class Game {
     }
 
     private void gererate() {
-        int startX = RandomUtils.uniform(random, WIDTH / 2 - 5, WIDTH /2 + 5);
+        int startX = RandomUtils.uniform(random, WIDTH / 2 - 5, WIDTH / 2 + 5);
         int startY = RandomUtils.uniform(random, HEIGHT / 2 - 5,  HEIGHT / 2 + 5);
         curX = startX;
         curY = startY;
@@ -61,20 +60,23 @@ public class Game {
             int height = RandomUtils.uniform(random,  MINHEIGHT, MAXHEIGHT);
             int length = RandomUtils.uniform(random, 9, 14);
             double r = RandomUtils.uniform(random);
-            int nx = x + length * bearings[i][0];
-            int ny = y + length * bearings[i][1];
+            int nx = x + length * BEARINGS[i][0];
+            int ny = y + length * BEARINGS[i][1];
 
-            if (r + possibilities[i] > 1 && nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1 && nx - width / 2 > 0 && ny - height / 2 > 0 && world[nx][ny].equals(Tileset.NOTHING)) {
-                roomCount += 1;
-
-                addPath(x, y, i, length);
-
-                addRoom(nx, ny, width, height);
-
-                search(nx, ny);
+            if (r + possibilities[i] > 1 && nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1) {
+                if (nx - width / 2 > 0 && ny - height / 2 > 0 && world[nx][ny].equals(Tileset.NOTHING)) {
+                    roomCount += 1;
+                }
             }
+
+            addPath(x, y, i, length);
+
+            addRoom(nx, ny, width, height);
+
+            search(nx, ny);
         }
     }
+
 
     private void addRoom(int x, int y, int width, int height) {
         for (int i = 0; i < width; ++i) {
@@ -86,15 +88,22 @@ public class Game {
 
     private void addPath(int x, int y, int bearing, int length) {
         for (int i = 0; i < length; ++i) {
-            world[x + i * bearings[bearing][0]][y + i * bearings[bearing][1]] = Tileset.FLOOR;
+            world[x + i * BEARINGS[bearing][0]][y + i * BEARINGS[bearing][1]] = Tileset.FLOOR;
         }
     }
 
     private void addWall() {
         for (int i = 0; i < WIDTH; ++i) {
             for (int j = 0; j < HEIGHT; ++j) {
-                if(!world[i][j].equals(Tileset.FLOOR)) {
-                    if (i - 1 >= 0 && world[i - 1][j].equals(Tileset.FLOOR) || i + 1 < WIDTH && world[i + 1][j].equals(Tileset.FLOOR) || j - 1 >= 0 && world[i][j - 1].equals(Tileset.FLOOR) || j + 1 < HEIGHT && world[i][j + 1].equals(Tileset.FLOOR) || i - 1 >= 0 && j - 1 >= 0 && world[i - 1][j - 1].equals(Tileset.FLOOR) || i - 1 >= 0 && j + 1 < HEIGHT && world[i - 1][j + 1].equals(Tileset.FLOOR) || i + 1 < WIDTH && j - 1 >= 0 && world[i + 1][j - 1].equals(Tileset.FLOOR) || i + 1 < WIDTH && j + 1 < HEIGHT && world[i + 1][j + 1].equals(Tileset.FLOOR)) {
+                if (!world[i][j].equals(Tileset.FLOOR)) {
+                    boolean flag = false;
+                    flag = flag || i - 1 >= 0 && world[i - 1][j].equals(Tileset.FLOOR) || i + 1 < WIDTH && world[i + 1][j].equals(Tileset.FLOOR);
+                    flag = flag || j - 1 >= 0 && world[i][j - 1].equals(Tileset.FLOOR) || j + 1 < HEIGHT && world[i][j + 1].equals(Tileset.FLOOR);
+                    flag = flag || i - 1 >= 0 && j - 1 >= 0 && world[i - 1][j - 1].equals(Tileset.FLOOR);
+                    flag = flag || i - 1 >= 0 && j + 1 < HEIGHT && world[i - 1][j + 1].equals(Tileset.FLOOR);
+                    flag = flag || i + 1 < WIDTH && j - 1 >= 0 && world[i + 1][j - 1].equals(Tileset.FLOOR);
+                    flag = flag || i + 1 < WIDTH && j + 1 < HEIGHT && world[i + 1][j + 1].equals(Tileset.FLOOR);
+                    if (flag) {
                         world[i][j] = Tileset.WALL;
                     }
                 }
@@ -148,24 +157,33 @@ public class Game {
             start(num);
             cur++;
             for (; cur < input.length(); ++cur) {
-                if (input.charAt(cur) == 'W' || input.charAt(cur) == 'w' && world[curX + bearings[0][0]][curY + bearings[0][1]].equals(Tileset.FLOOR)) {
-                    curX = curX + bearings[0][0];
-                    curY = curY + bearings[0][1];
+                if (input.charAt(cur) == 'W' || input.charAt(cur) == 'w') {
+                    if (world[curX + BEARINGS[0][0]][curY + BEARINGS[0][1]].equals(Tileset.FLOOR)) {
+                        curX = curX + BEARINGS[0][0];
+                        curY = curY + BEARINGS[0][1];
+                    }
                 }
 
-                if (input.charAt(cur) == 'A' || input.charAt(cur) == 'a' && world[curX + bearings[1][0]][curY + bearings[1][1]].equals(Tileset.FLOOR)) {
-                    curX = curX + bearings[1][0];
-                    curY = curY + bearings[1][1];
+                if (input.charAt(cur) == 'A' || input.charAt(cur) == 'a') {
+                    if (world[curX + BEARINGS[1][0]][curY + BEARINGS[1][1]].equals(Tileset.FLOOR)) {
+                        curX = curX + BEARINGS[1][0];
+                        curY = curY + BEARINGS[1][1];
+                    }
                 }
 
-                if (input.charAt(cur) == 'S' || input.charAt(cur) == 's' && world[curX + bearings[2][0]][curY + bearings[2][1]].equals(Tileset.FLOOR)) {
-                    curX = curX + bearings[2][0];
-                    curY = curY + bearings[2][1];
+                if (input.charAt(cur) == 'S' || input.charAt(cur) == 's') {
+                    if (world[curX + BEARINGS[2][0]][curY + BEARINGS[2][1]].equals(Tileset.FLOOR)) {
+                        curX = curX + BEARINGS[2][0];
+                        curY = curY + BEARINGS[2][1];
+                    }
                 }
 
-                if (input.charAt(cur) == 'D' || input.charAt(cur) == 'd' && world[curX + bearings[3][0]][curY + bearings[3][1]].equals(Tileset.FLOOR)) {
-                    curX = curX + bearings[3][0];
-                    curY = curY + bearings[3][1];
+
+                if (input.charAt(cur) == 'D' || input.charAt(cur) == 'd') {
+                    if (world[curX + BEARINGS[3][0]][curY + BEARINGS[3][1]].equals(Tileset.FLOOR)) {
+                        curX = curX + BEARINGS[3][0];
+                        curY = curY + BEARINGS[3][1];
+                    }
                 }
 
                 if (input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') {
@@ -183,8 +201,8 @@ public class Game {
             }
         }
         finalWorldFrame[curX][curY] = Tileset.PLAYER;
-        world[curX][curY] = Tileset.PLAYER;
-        ter.renderFrame(world);
+//        world[curX][curY] = Tileset.PLAYER;
+//        ter.renderFrame(world);
         return finalWorldFrame;
     }
     private void save() {
