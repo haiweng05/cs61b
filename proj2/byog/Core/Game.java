@@ -36,12 +36,14 @@ public class Game {
         }
     }
 
-    private void start(int seed) {
+    private void start(long seed, boolean mode) {
         random = new Random(seed);
         gererate();
         addWall();
         // draws the world to the screen
-        ter.renderFrame(world);
+        if (mode) {
+            ter.renderFrame(world);
+        }
     }
 
     private void gererate() {
@@ -62,8 +64,10 @@ public class Game {
             double r = RandomUtils.uniform(random);
             int nx = x + length * BEARINGS[i][0];
             int ny = y + length * BEARINGS[i][1];
-
-            if (r + possibilities[i] > 1 && nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1) {
+            if (r + possibilities[i] < 1) {
+                continue;
+            }
+            if (nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1) {
                 if (nx - width / 2 > 0 && ny - height / 2 > 0 && world[nx][ny].equals(Tileset.NOTHING)) {
                     roomCount += 1;
 
@@ -81,7 +85,7 @@ public class Game {
 
     private void addRoom(int x, int y, int width, int height) {
         for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j){
+            for (int j = 0; j < height; ++j) {
                 world[x - width / 2 + i][y - height / 2 + j] = Tileset.FLOOR;
             }
         }
@@ -98,12 +102,22 @@ public class Game {
             for (int j = 0; j < HEIGHT; ++j) {
                 if (!world[i][j].equals(Tileset.FLOOR)) {
                     boolean flag = false;
-                    flag = flag || i - 1 >= 0 && world[i - 1][j].equals(Tileset.FLOOR) || i + 1 < WIDTH && world[i + 1][j].equals(Tileset.FLOOR);
-                    flag = flag || j - 1 >= 0 && world[i][j - 1].equals(Tileset.FLOOR) || j + 1 < HEIGHT && world[i][j + 1].equals(Tileset.FLOOR);
-                    flag = flag || i - 1 >= 0 && j - 1 >= 0 && world[i - 1][j - 1].equals(Tileset.FLOOR);
-                    flag = flag || i - 1 >= 0 && j + 1 < HEIGHT && world[i - 1][j + 1].equals(Tileset.FLOOR);
-                    flag = flag || i + 1 < WIDTH && j - 1 >= 0 && world[i + 1][j - 1].equals(Tileset.FLOOR);
-                    flag = flag || i + 1 < WIDTH && j + 1 < HEIGHT && world[i + 1][j + 1].equals(Tileset.FLOOR);
+                    flag = flag || i - 1 >= 0 && world[i - 1][j].equals(Tileset.FLOOR);
+                    flag = flag || i + 1 < WIDTH && world[i + 1][j].equals(Tileset.FLOOR);
+                    flag = flag || j - 1 >= 0 && world[i][j - 1].equals(Tileset.FLOOR);
+                    flag = flag || j + 1 < HEIGHT && world[i][j + 1].equals(Tileset.FLOOR);
+                    if (i - 1 >= 0 && j - 1 >= 0) {
+                        flag = flag || world[i - 1][j - 1].equals(Tileset.FLOOR);
+                    }
+                    if (i - 1 >= 0 && j + 1 < HEIGHT) {
+                        flag = flag || world[i - 1][j + 1].equals(Tileset.FLOOR);
+                    }
+                    if (i + 1 < WIDTH && j - 1 >= 0) {
+                        flag = flag || world[i + 1][j - 1].equals(Tileset.FLOOR);
+                    }
+                    if (i + 1 < WIDTH && j + 1 < HEIGHT) {
+                        flag = flag || world[i + 1][j + 1].equals(Tileset.FLOOR);
+                    }
                     if (flag) {
                         world[i][j] = Tileset.WALL;
                     }
@@ -145,16 +159,16 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
         if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
             int cur = 1;
-            int num = 0;
+            long num = 0L;
 
             for (cur = 1; cur < input.length(); ++cur) {
                 if (input.charAt(cur) != 'S' && input.charAt(cur) != 's') {
-                    num = num * 10 + (input.charAt(cur) - '0');
+                    num = num * 10L + (input.charAt(cur) - '0');
                 } else {
                     break;
                 }
             }
-            start(num);
+            start(num, false);
             cur++;
             for (; cur < input.length(); ++cur) {
                 if (input.charAt(cur) == 'W' || input.charAt(cur) == 'w') {
@@ -192,7 +206,7 @@ public class Game {
             }
 
         } else {
-            start(0);
+            start(0, false);
         }
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int i = 0; i < WIDTH; ++i) {
