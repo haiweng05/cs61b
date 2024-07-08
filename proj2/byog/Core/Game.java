@@ -111,7 +111,7 @@ public class Game {
         }
     }
 
-    private double[] getPossibility(int x,int y) {
+    private double[] getPossibility(int x, int y) {
         double[] result = new double[4];
         double coefficient = 3 * Math.exp(-1.0d * roomCount / 10);
         result[0] = coefficient * (WIDTH - x) / WIDTH;
@@ -149,8 +149,7 @@ public class Game {
             for (cur = 1; cur < input.length(); ++cur) {
                 if (input.charAt(cur) != 'S' && input.charAt(cur) != 's') {
                     num = num * 10 + (input.charAt(cur) - '0');
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -205,6 +204,7 @@ public class Game {
 //        ter.renderFrame(world);
         return finalWorldFrame;
     }
+
     private void save() {
         return;
     }
