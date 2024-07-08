@@ -66,14 +66,15 @@ public class Game {
             if (r + possibilities[i] > 1 && nx + width / 2 < WIDTH - 1 && ny + height / 2 < HEIGHT - 1) {
                 if (nx - width / 2 > 0 && ny - height / 2 > 0 && world[nx][ny].equals(Tileset.NOTHING)) {
                     roomCount += 1;
+
+                    addPath(x, y, i, length);
+
+                    addRoom(nx, ny, width, height);
+
+                    search(nx, ny);
                 }
             }
 
-            addPath(x, y, i, length);
-
-            addRoom(nx, ny, width, height);
-
-            search(nx, ny);
         }
     }
 
