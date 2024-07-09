@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.Color;
 import java.util.Random;
 
+import java.io.Serializable;
+
 public class Game {
     TERenderer ter;
     /* Feel free to change the width and height. */
@@ -213,6 +215,7 @@ public class Game {
                 Out file = new Out("memory.txt");
                 file.print(input);
                 ter = null;
+                System.exit(0);
                 break;
             } else {
                 quit = false;
@@ -302,14 +305,14 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // Fill out this method to run the game using the input passed in,
-        // and return a 2D tile representation of the world that would have been
-        // drawn if the same inputs had been given to playWithKeyboard().
+        boolean quit = false;
+        int cur = 1;
+        while (input.charAt(0) == 'l' || input.charAt(0) == 'L') {
+            In file = new In("memory.txt");
+            input = file.readString() + input.substring(cur);
+        }
         if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
-            int cur = 1;
             long num = 0L;
-            boolean quit = false;
-
             for (cur = 1; cur < input.length(); ++cur) {
                 if (input.charAt(cur) != 'S' && input.charAt(cur) != 's') {
                     num = num * 10L + (input.charAt(cur) - '0');
@@ -319,48 +322,43 @@ public class Game {
             }
             start(num, false);
             cur++;
-            for (; cur < input.length(); ++cur) {
-                if (input.charAt(cur) == 'W' || input.charAt(cur) == 'w') {
-                    if (world[curX + BEARINGS[0][0]][curY + BEARINGS[0][1]].equals(Tileset.FLOOR)) {
-                        curX = curX + BEARINGS[0][0];
-                        curY = curY + BEARINGS[0][1];
+        }
+        for (; cur < input.length(); ++cur) {
+            if (input.charAt(cur) == 'W' || input.charAt(cur) == 'w') {
+                if (world[curX + BEARINGS[0][0]][curY + BEARINGS[0][1]].equals(Tileset.FLOOR)) {
+                    curX = curX + BEARINGS[0][0];
+                    curY = curY + BEARINGS[0][1];
 
-                    }
-                }
-
-                if (input.charAt(cur) == 'A' || input.charAt(cur) == 'a') {
-                    if (world[curX + BEARINGS[1][0]][curY + BEARINGS[1][1]].equals(Tileset.FLOOR)) {
-                        curX = curX + BEARINGS[1][0];
-                        curY = curY + BEARINGS[1][1];
-                    }
-                }
-
-                if (input.charAt(cur) == 'S' || input.charAt(cur) == 's') {
-                    if (world[curX + BEARINGS[2][0]][curY + BEARINGS[2][1]].equals(Tileset.FLOOR)) {
-                        curX = curX + BEARINGS[2][0];
-                        curY = curY + BEARINGS[2][1];
-
-                    }
-                }
-
-
-                if (input.charAt(cur) == 'D' || input.charAt(cur) == 'd') {
-                    if (world[curX + BEARINGS[3][0]][curY + BEARINGS[3][1]].equals(Tileset.FLOOR)) {
-                        curX = curX + BEARINGS[3][0];
-                        curY = curY + BEARINGS[3][1];
-
-                    }
-                }
-                if (input.charAt(cur) == ':') {
-                    quit = true;
-                }
-                if ((input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') && quit) {
-                    cur++;
                 }
             }
+            if (input.charAt(cur) == 'A' || input.charAt(cur) == 'a') {
+                if (world[curX + BEARINGS[1][0]][curY + BEARINGS[1][1]].equals(Tileset.FLOOR)) {
+                    curX = curX + BEARINGS[1][0];
+                    curY = curY + BEARINGS[1][1];
+                }
+            }
+            if (input.charAt(cur) == 'S' || input.charAt(cur) == 's') {
+                if (world[curX + BEARINGS[2][0]][curY + BEARINGS[2][1]].equals(Tileset.FLOOR)) {
+                    curX = curX + BEARINGS[2][0];
+                    curY = curY + BEARINGS[2][1];
 
-        } else {
-            start(0, false);
+                }
+            }
+            if (input.charAt(cur) == 'D' || input.charAt(cur) == 'd') {
+                if (world[curX + BEARINGS[3][0]][curY + BEARINGS[3][1]].equals(Tileset.FLOOR)) {
+                    curX = curX + BEARINGS[3][0];
+                    curY = curY + BEARINGS[3][1];
+
+                }
+            }
+            if (input.charAt(cur) == ':') {
+                quit = true;
+            }
+            if ((input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') && quit) {
+                cur++;
+                Out file = new Out("memory.txt");
+                file.print(input.substring(0,input.length() - 2));
+            }
         }
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int i = 0; i < WIDTH; ++i) {
@@ -369,8 +367,6 @@ public class Game {
             }
         }
         finalWorldFrame[curX][curY] = Tileset.PLAYER;
-//
-//        ter.renderFrame(world);
         return finalWorldFrame;
     }
 
