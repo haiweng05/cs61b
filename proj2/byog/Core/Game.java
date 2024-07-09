@@ -11,8 +11,6 @@ import java.awt.Font;
 import java.awt.Color;
 import java.util.Random;
 
-import java.io.Serializable;
-
 public class Game {
     TERenderer ter;
     /* Feel free to change the width and height. */
@@ -357,7 +355,7 @@ public class Game {
             if ((input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') && quit) {
                 cur++;
                 Out file = new Out("memory.txt");
-                file.print(input.substring(0,input.length() - 2));
+                file.print(input.substring(0, input.length() - 2));
             }
         }
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
