@@ -7,7 +7,8 @@ import edu.princeton.cs.introcs.In;
 import edu.princeton.cs.introcs.Out;
 import edu.princeton.cs.introcs.StdDraw;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Color;
 import java.util.Random;
 
 public class Game {
@@ -150,7 +151,6 @@ public class Game {
         String input = "";
         boolean quit = false;
         boolean start = false;
-        boolean readSeed = false;
 
         while (true) {
             if (!StdDraw.hasNextKeyTyped()) {
@@ -160,31 +160,8 @@ public class Game {
             input += String.valueOf(key);
 
             if (!start) {
-                if (key == 'N' || key == 'n') {
-                    readSeed = true;
-                    long seed = 0;
-                    while (true) {
-                        if (!StdDraw.hasNextKeyTyped()) {
-                            continue;
-                        }
-                        key = StdDraw.nextKeyTyped();
-                        input += String.valueOf(key);
-
-                        if (key == 'S' || key == 's') {
-                            start = true;
-                            start(seed, false);
-                            break;
-                        } else {
-                            seed = seed * 10L + (key - '0');
-                        }
-                    }
-                } else if (key == 'L' || key == 'l') {
-                    In file = new In("memory.txt");
-                    input = file.readString();
-                    input = input.substring(0,input.length() - 2);
-                    world = playWithInputString(input);
-                    start = true;
-                }
+                input += getSeed(key);
+                start = true;
             }
 
             StdDraw.clear();
@@ -235,7 +212,6 @@ public class Game {
             } else if ((key == 'Q' || key == 'q') && quit) {
                 Out file = new Out("memory.txt");
                 file.print(input);
-                quit();
                 ter = null;
                 break;
             } else {
@@ -244,8 +220,35 @@ public class Game {
         }
     }
 
-    private void quit() {
+    private String getSeed(char c) {
+        String input = "";
+        while (true) {
+            if (c == 'N' || c == 'n') {
+                long seed = 0;
+                while (true) {
+                    if (!StdDraw.hasNextKeyTyped()) {
+                        continue;
+                    }
+                    char key = StdDraw.nextKeyTyped();
+                    input += String.valueOf(key);
 
+                    if (key == 'S' || key == 's') {
+                        start(seed, false);
+                        break;
+                    } else {
+                        seed = seed * 10L + (key - '0');
+                    }
+                }
+                break;
+            } else if (c == 'L' || c == 'l') {
+                In file = new In("memory.txt");
+                input = file.readString();
+                input = input.substring(0, input.length() - 2);
+                world = playWithInputString(input);
+                break;
+            }
+        }
+        return input;
     }
 
     public void drawFrame(String s) {
@@ -305,6 +308,7 @@ public class Game {
         if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
             int cur = 1;
             long num = 0L;
+            boolean quit = false;
 
             for (cur = 1; cur < input.length(); ++cur) {
                 if (input.charAt(cur) != 'S' && input.charAt(cur) != 's') {
@@ -347,9 +351,11 @@ public class Game {
 
                     }
                 }
-
-                if (input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') {
-                    save();
+                if (input.charAt(cur) == ':') {
+                    quit = true;
+                }
+                if ((input.charAt(cur) == 'Q' || input.charAt(cur) == 'q') && quit) {
+                    cur++;
                 }
             }
 
