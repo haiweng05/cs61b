@@ -3,7 +3,11 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import edu.princeton.cs.introcs.In;
+import edu.princeton.cs.introcs.Out;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.util.Random;
 
 public class Game {
@@ -141,6 +145,145 @@ public class Game {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        menu();
+
+        String input = "";
+        boolean quit = false;
+        boolean start = false;
+        boolean readSeed = false;
+
+        while (true) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
+            }
+            char key = StdDraw.nextKeyTyped();
+            input += String.valueOf(key);
+
+            if (!start) {
+                if (key == 'N' || key == 'n') {
+                    readSeed = true;
+                    long seed = 0;
+                    while (true) {
+                        if (!StdDraw.hasNextKeyTyped()) {
+                            continue;
+                        }
+                        key = StdDraw.nextKeyTyped();
+                        input += String.valueOf(key);
+
+                        if (key == 'S' || key == 's') {
+                            start = true;
+                            start(seed, false);
+                            break;
+                        } else {
+                            seed = seed * 10L + (key - '0');
+                        }
+                    }
+                } else if (key == 'L' || key == 'l') {
+                    In file = new In("memory.txt");
+                    input = file.readString();
+                    input = input.substring(0,input.length() - 2);
+                    world = playWithInputString(input);
+                    start = true;
+                }
+            }
+
+            StdDraw.clear();
+            ter = new TERenderer();
+            ter.initialize(WIDTH, HEIGHT);
+            world[curX][curY] = Tileset.PLAYER;
+            ter.renderFrame(world);
+            StdDraw.enableDoubleBuffering();
+
+            if (key == 'W' || key == 'w') {
+                if (world[curX + BEARINGS[0][0]][curY + BEARINGS[0][1]].equals(Tileset.FLOOR)) {
+                    world[curX][curY] = Tileset.FLOOR;
+                    curX = curX + BEARINGS[0][0];
+                    curY = curY + BEARINGS[0][1];
+                    world[curX][curY] = Tileset.PLAYER;
+                    ter.renderFrame(world);
+                }
+                quit = false;
+            } else if (key == 'A' || key == 'a') {
+                if (world[curX + BEARINGS[1][0]][curY + BEARINGS[1][1]].equals(Tileset.FLOOR)) {
+                    world[curX][curY] = Tileset.FLOOR;
+                    curX = curX + BEARINGS[1][0];
+                    curY = curY + BEARINGS[1][1];
+                    world[curX][curY] = Tileset.PLAYER;
+                    ter.renderFrame(world);
+                }
+                quit = false;
+            } else if (key == 'S' || key == 's') {
+                if (world[curX + BEARINGS[2][0]][curY + BEARINGS[2][1]].equals(Tileset.FLOOR)) {
+                    world[curX][curY] = Tileset.FLOOR;
+                    curX = curX + BEARINGS[2][0];
+                    curY = curY + BEARINGS[2][1];
+                    world[curX][curY] = Tileset.PLAYER;
+                    ter.renderFrame(world);
+                }
+                quit = false;
+            } else if (key == 'D' || key == 'd') {
+                if (world[curX + BEARINGS[3][0]][curY + BEARINGS[3][1]].equals(Tileset.FLOOR)) {
+                    world[curX][curY] = Tileset.FLOOR;
+                    curX = curX + BEARINGS[3][0];
+                    curY = curY + BEARINGS[3][1];
+                    world[curX][curY] = Tileset.PLAYER;
+                    ter.renderFrame(world);
+                }
+                quit = false;
+            } else if (key == ':') {
+                quit = true;
+            } else if ((key == 'Q' || key == 'q') && quit) {
+                Out file = new Out("memory.txt");
+                file.print(input);
+                quit();
+                ter = null;
+                break;
+            } else {
+                quit = false;
+            }
+        }
+    }
+
+    private void quit() {
+
+    }
+
+    public void drawFrame(String s) {
+        int midWidth = WIDTH / 2;
+        int midHeight = HEIGHT / 2;
+
+        StdDraw.clear();
+        StdDraw.clear(Color.black);
+
+        // Draw the actual text
+        Font bigFont = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(bigFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(midWidth, midHeight, s);
+        StdDraw.show();
+    }
+
+    private void menu() {
+        StdDraw.setCanvasSize(40 * 16, 40 * 16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, 40);
+        StdDraw.setYscale(0, 40);
+
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+
+        StdDraw.clear();
+        StdDraw.clear(Color.black);
+
+        // Draw the Menu
+        StdDraw.setPenColor(Color.white);
+        StdDraw.setFont(font);
+        StdDraw.text(20, 20 + 4, "New Game(N)");
+        StdDraw.text(20, 20, "Load Game(L)");
+        StdDraw.text(20, 20 - 4, "Quit(Q)");
+        StdDraw.show();
+        StdDraw.pause(2000);
     }
 
     /**
@@ -177,6 +320,7 @@ public class Game {
                     if (world[curX + BEARINGS[0][0]][curY + BEARINGS[0][1]].equals(Tileset.FLOOR)) {
                         curX = curX + BEARINGS[0][0];
                         curY = curY + BEARINGS[0][1];
+
                     }
                 }
 
@@ -191,6 +335,7 @@ public class Game {
                     if (world[curX + BEARINGS[2][0]][curY + BEARINGS[2][1]].equals(Tileset.FLOOR)) {
                         curX = curX + BEARINGS[2][0];
                         curY = curY + BEARINGS[2][1];
+
                     }
                 }
 
@@ -199,6 +344,7 @@ public class Game {
                     if (world[curX + BEARINGS[3][0]][curY + BEARINGS[3][1]].equals(Tileset.FLOOR)) {
                         curX = curX + BEARINGS[3][0];
                         curY = curY + BEARINGS[3][1];
+
                     }
                 }
 
@@ -217,7 +363,7 @@ public class Game {
             }
         }
         finalWorldFrame[curX][curY] = Tileset.PLAYER;
-//        world[curX][curY] = Tileset.PLAYER;
+//
 //        ter.renderFrame(world);
         return finalWorldFrame;
     }
