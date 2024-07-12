@@ -7,6 +7,8 @@ public class Percolation {
     // stores whether the blocks are closed or open.
     private boolean[][] map;
     private WeightedQuickUnionUF disjointSet;
+    private WeightedQuickUnionUF percolateSet;
+
     private int n;
     private int opensites;
 
@@ -29,6 +31,10 @@ public class Percolation {
             }
         }
         disjointSet = new WeightedQuickUnionUF(n * n + 2);
+        percolateSet = new WeightedQuickUnionUF(n * n + 2);
+        for (int i = 0; i < n; ++i) {
+            percolateSet.union(n * n + 1, convert(n - 1, i));
+        }
     }
 
     // open the site (row, col) if it is not open already
@@ -43,21 +49,26 @@ public class Percolation {
         opensites += 1;
         if (row == 0) {
             disjointSet.union(0, convert(row, col));
+            percolateSet.union(0, convert(row, col));
         }
 //        if (row == n - 1) {
 //            disjointSet.union(n * n + 1, convert(row, col));
 //        }
         if (row - 1 >= 0 && map[row - 1][col]) {
             disjointSet.union(convert(row - 1, col), convert(row, col));
+            percolateSet.union(convert(row - 1, col), convert(row, col));
         }
         if (col - 1 >= 0 && map[row][col - 1]) {
             disjointSet.union(convert(row, col - 1), convert(row, col));
+            percolateSet.union(convert(row, col - 1), convert(row, col));
         }
         if (row + 1 < n && map[row + 1][col]) {
             disjointSet.union(convert(row + 1, col), convert(row, col));
+            percolateSet.union(convert(row + 1, col), convert(row, col));
         }
         if (col + 1 < n && map[row][col + 1]) {
             disjointSet.union(convert(row, col + 1), convert(row, col));
+            percolateSet.union(convert(row, col + 1), convert(row, col));
         }
     }
     // is the site (row, col) open?
@@ -86,14 +97,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        for (int i = 0; i < n; ++i) {
-            if (isOpen(n - 1, i)) {
-                if (isFull(n - 1, i)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return percolateSet.connected(n * n + 1, 0);
     }
 
     public static void main(String[] args) {

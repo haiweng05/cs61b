@@ -29,11 +29,11 @@ public class PercolationStats {
             percolation = pf.make(N);
             StdRandom.shuffle(order);
 
-            for (int num = 1; num <= N; ++num) {
+            for (int num = 1; num <= N * N; ++num) {
                 int value = order[num - 1];
                 percolation.open(value / N, value % N);
                 if (percolation.percolates()) {
-                    res[i] = 1.0 * num / percolation.numberOfOpenSites();
+                    res[i] = 1.0 * num / (N * N);
                     break;
                 }
             }
