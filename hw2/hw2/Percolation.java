@@ -42,7 +42,7 @@ public class Percolation {
         map[row][col] = true;
         opensites += 1;
         if (row == 0) {
-            disjointSet.union(n * n, convert(row, col));
+            disjointSet.union(0, convert(row, col));
         }
         if (row == n - 1) {
             disjointSet.union(n * n + 1, convert(row, col));
@@ -76,7 +76,7 @@ public class Percolation {
         if (!isOpen(row, col)) {
             return false;
         }
-        return disjointSet.connected(n * n, convert(row, col));
+        return disjointSet.connected(0, convert(row, col));
     }
 
     // number of open sites
@@ -86,7 +86,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return disjointSet.connected(n * n, n * n + 1);
+        return disjointSet.connected(0, n * n + 1);
     }
 
     public static void main(String[] args) {
