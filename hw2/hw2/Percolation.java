@@ -36,6 +36,9 @@ public class Percolation {
         if (row < 0 || col < 0 || row >= n || col >= n) {
             throw(new java.lang.IndexOutOfBoundsException("Index out of the range [0,n)"));
         }
+        if (isOpen(row, col)) {
+            return;
+        }
         map[row][col] = true;
         opensites += 1;
         if (row == 0) {
