@@ -70,6 +70,9 @@ public class Percolation {
         if (row < 0 || col < 0 || row >= n || col >= n) {
             throw(new java.lang.IndexOutOfBoundsException("Index out of the range [0,n)"));
         }
+        if (!isOpen(row, col)) {
+            return false;
+        }
         return disjointSet.connected(0, convert(row, col));
     }
 
@@ -82,7 +85,12 @@ public class Percolation {
     public boolean percolates() {
         boolean flag = false;
         for (int i = 0; i < n; ++i) {
-            flag = flag || isFull(n - 1, i);
+            if (isOpen(n - 1, i)) {
+                flag = flag || isFull(n - 1, i);
+            }
+            if (flag) {
+                return flag;
+            }
         }
         return flag;
     }
