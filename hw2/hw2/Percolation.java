@@ -44,9 +44,9 @@ public class Percolation {
         if (row == 0) {
             disjointSet.union(0, convert(row, col));
         }
-        if (row == n - 1) {
-            disjointSet.union(n * n + 1, convert(row, col));
-        }
+//        if (row == n - 1) {
+//            disjointSet.union(n * n + 1, convert(row, col));
+//        }
         if (row - 1 >= 0 && map[row - 1][col]) {
             disjointSet.union(convert(row - 1, col), convert(row, col));
         }
@@ -86,7 +86,14 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return disjointSet.connected(0, n * n + 1);
+        for (int i = 0; i < n; ++i) {
+            if (isOpen(n - 1, i)) {
+                if (isFull(n - 1, i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {

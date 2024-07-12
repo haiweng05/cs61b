@@ -33,7 +33,7 @@ public class PercolationStats {
                 int value = order[num - 1];
                 percolation.open(value / N, value % N);
                 if (percolation.percolates()) {
-                    res[i] = num;
+                    res[i] = 1.0 * num / percolation.numberOfOpenSites();
                     break;
                 }
             }
