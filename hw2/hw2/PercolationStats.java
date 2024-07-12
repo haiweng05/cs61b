@@ -31,7 +31,7 @@ public class PercolationStats {
 
             for (int num = 1; num <= N; ++num) {
                 int value = order[num - 1];
-                percolation.open(value / 8, value % 8);
+                percolation.open(value / N, value % N);
                 if (percolation.percolates()) {
                     res[i] = num;
                     break;
