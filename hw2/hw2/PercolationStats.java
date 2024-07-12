@@ -42,12 +42,12 @@ public class PercolationStats {
 
     // sample mean of percolation threshold
     public double mean() {
-        return StdStats.mean(res, 0, percolation.numberOfOpenSites());
+        return StdStats.mean(res, 0, res.length);
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return StdStats.stddevp(res, 0, percolation.numberOfOpenSites());
+        return StdStats.stddevp(res, 0, res.length);
     }
 
     // low endpoint of 95% confidence interval
