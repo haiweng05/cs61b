@@ -21,6 +21,7 @@ public class PercolationStats {
         n = N;
         t = T;
         res = new double[N];
+        order = new int[N];
         for (int i = 0; i < N * N; ++i) {
             order[i] = i;
         }

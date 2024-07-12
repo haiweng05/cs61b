@@ -28,7 +28,7 @@ public class Percolation {
                 map[i][j] = false;
             }
         }
-        disjointSet = new WeightedQuickUnionUF(n * n + 1);
+        disjointSet = new WeightedQuickUnionUF(n * n + 2);
     }
 
     // open the site (row, col) if it is not open already
@@ -43,6 +43,9 @@ public class Percolation {
         opensites += 1;
         if (row == 0) {
             disjointSet.union(0, convert(row, col));
+        }
+        if (row == n - 1) {
+            disjointSet.union(n * n + 1, convert(row, col));
         }
         if (row - 1 >= 0 && map[row - 1][col]) {
             disjointSet.union(convert(row - 1, col), convert(row, col));
@@ -83,16 +86,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        boolean flag = false;
-        for (int i = 0; i < n; ++i) {
-            if (isOpen(n - 1, i)) {
-                flag = flag || isFull(n - 1, i);
-            }
-            if (flag) {
-                return flag;
-            }
-        }
-        return flag;
+        return disjointSet.connected(0, n * n + 1);
     }
 
     public static void main(String[] args) {
