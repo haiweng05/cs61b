@@ -21,7 +21,7 @@ public class PercolationStats {
         n = N;
         t = T;
         res = new double[N];
-        order = new int[N];
+        order = new int[N * N];
         for (int i = 0; i < N * N; ++i) {
             order[i] = i;
         }
@@ -42,12 +42,12 @@ public class PercolationStats {
 
     // sample mean of percolation threshold
     public double mean() {
-        return StdStats.mean(res, 0, percolation.numberOfOpenSites() - 1);
+        return StdStats.mean(res, 0, percolation.numberOfOpenSites());
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return StdStats.stddevp(res, 0, percolation.numberOfOpenSites() - 1);
+        return StdStats.stddevp(res, 0, percolation.numberOfOpenSites());
     }
 
     // low endpoint of 95% confidence interval
