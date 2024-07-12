@@ -20,7 +20,7 @@ public class PercolationStats {
         }
         n = N;
         t = T;
-        res = new double[N];
+        res = new double[T];
         order = new int[N * N];
         for (int i = 0; i < N * N; ++i) {
             order[i] = i;
