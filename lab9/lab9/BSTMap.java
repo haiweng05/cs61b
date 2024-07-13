@@ -154,16 +154,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
         if (root == null) {
             return null;
         }
-        if (get(key) == null) {
-            return null;
-        }
-
         Node dummyRoot = new Node(null, null);
         dummyRoot.left = root;
 
         Node parent = dummyRoot;
         Node toRemove = root;
-        while (!toRemove.key.equals(key)) {
+        while (toRemove != null && !toRemove.key.equals(key)) {
             parent = toRemove;
             if (key.compareTo(toRemove.key) < 0) {
                 toRemove = toRemove.left;
@@ -171,11 +167,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
                 toRemove = toRemove.right;
             }
         }
-//
         V val = toRemove.value;
-//        if (!val.equals(value)) {
-//            return null;
-//        }
+
         if (toRemove.left == null && toRemove.right == null) {
             if (toRemove == parent.left) {
                 parent.left = null;
@@ -205,8 +198,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
             if (leftMaxParent != toRemove) {
                 leftMaxParent.right = leftMax.left;
             }
-
-            leftMax.left = toRemove.left;
+            if (leftMax != toRemove.left) {
+                leftMax.left = toRemove.left;
+            }
             leftMax.right = toRemove.right;
 
             if (toRemove == parent.left) {
@@ -229,16 +223,13 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
         if (root == null) {
             return null;
         }
-        if (get(key) == null || get(key) != value) {
-            return null;
-        }
 
         Node dummyRoot = new Node(null, null);
         dummyRoot.left = root;
 
         Node parent = dummyRoot;
         Node toRemove = root;
-        while (!toRemove.key.equals(key)) {
+        while (toRemove != null && !toRemove.key.equals(key)) {
             parent = toRemove;
             if (key.compareTo(toRemove.key) < 0) {
                 toRemove = toRemove.left;
@@ -246,11 +237,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
                 toRemove = toRemove.right;
             }
         }
-//
         V val = toRemove.value;
-//        if (!val.equals(value)) {
-//            return null;
-//        }
+        if (!val.equals(value)) {
+            return null;
+        }
         if (toRemove.left == null && toRemove.right == null) {
             if (toRemove == parent.left) {
                 parent.left = null;
@@ -281,7 +271,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
                 leftMaxParent.right = leftMax.left;
             }
 
-            leftMax.left = toRemove.left;
+            if (leftMax != toRemove.left) {
+                leftMax.left = toRemove.left;
+            }
             leftMax.right = toRemove.right;
 
             if (toRemove == parent.left) {

@@ -94,8 +94,8 @@ public class TestBSTMap {
         b.put("root", 2);
         b.put("soot", 3);
         b.put("aoot", 1);
-        assertEquals((Integer)1, b.remove("aoot"));
         assertEquals((Integer)2, b.remove("root"));
+        assertEquals((Integer)1, b.remove("aoot"));
         assertEquals(1, b.size());
         assertEquals((Integer)3, b.remove("soot"));
         assertNull(b.remove("soot"));
@@ -107,9 +107,9 @@ public class TestBSTMap {
         bb.put("soot", 3);
         bb.put("aoot", 1);
         assertNull(bb.remove("aoot", 2));
+        assertEquals((Integer)2, bb.remove("root"));
         assertEquals((Integer)1, bb.remove("aoot", 1));
         assertNull(bb.remove("soot", 2));
-        assertEquals((Integer)2, bb.remove("root"));
         assertEquals(1, bb.size());
         assertEquals((Integer)3, bb.remove("soot"));
         assertNull(bb.remove("soot"));
