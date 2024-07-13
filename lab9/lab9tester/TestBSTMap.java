@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import lab9.BSTMap;
 
+import java.util.Iterator;
+
 /**
  * Tests by Brendan Hu, Spring 2015, revised for 2018 by Josh Hug
  */
@@ -86,6 +88,47 @@ public class TestBSTMap {
         assertTrue(b.get("hi") != null);
     }
 
+    @Test
+    public void sanityRemoveTest() {
+        BSTMap<String, Integer> b = new BSTMap<>();
+        b.put("root", 2);
+        b.put("soot", 3);
+        b.put("aoot", 1);
+        assertEquals((Integer)1, b.remove("aoot"));
+        assertEquals((Integer)2, b.remove("root"));
+        assertEquals(1, b.size());
+        assertEquals((Integer)3, b.remove("soot"));
+        assertNull(b.remove("soot"));
+
+
+        BSTMap<String, Integer> bb = new BSTMap<>();
+        assertNull(bb.remove("aaa", 13));
+        bb.put("root", 2);
+        bb.put("soot", 3);
+        bb.put("aoot", 1);
+        assertNull(bb.remove("aoot", 2));
+        assertEquals((Integer)1, bb.remove("aoot", 1));
+        assertNull(bb.remove("soot", 2));
+        assertEquals((Integer)2, bb.remove("root"));
+        assertEquals(1, bb.size());
+        assertEquals((Integer)3, bb.remove("soot"));
+        assertNull(bb.remove("soot"));
+    }
+
+    public void sanityIteratorTest() {
+        BSTMap<String, Integer> b = new BSTMap<>();
+        b.put("root", 2);
+        b.put("soot", 3);
+        b.put("aoot", 1);
+        Iterator<String> iter = b.iterator();
+        assertTrue(iter.hasNext());
+        assertEquals("aoot", iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals("root", iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals("soot", iter.next());
+        assertFalse(iter.hasNext());
+    }
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestBSTMap.class);
     }

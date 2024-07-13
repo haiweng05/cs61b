@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import lab9.MyHashMap;
 
+import java.util.Iterator;
+
 /**
  * Tests by Brendan Hu, Spring 2015, revised for 2018 by Josh Hug
  */
@@ -127,6 +129,28 @@ public class TestMyHashMap {
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
     }
 
+    @Test
+    public void iteratorTest() {
+        MyHashMap<String, Integer> dict = new MyHashMap<>();
+        dict.put("123", 123);
+        dict.put("413", 413);
+        dict.put("412", 412);
+        assertEquals(3, dict.size());
+        assertNull(dict.remove("412", 413));
+        assertEquals(3, dict.size());
+        assertEquals((Integer)412, dict.remove("412", 412));
+        assertEquals(2, dict.size());
+        dict.put("1", 1);
+        dict.put("2", 2);
+        Iterator<String> iter = dict.iterator();
+        int cnt = 0;
+        while (iter.hasNext()) {
+            iter.next();
+            cnt += 1;
+        }
+
+
+    }
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestMyHashMap.class);
     }
