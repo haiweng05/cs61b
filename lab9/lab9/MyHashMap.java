@@ -105,7 +105,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     @Override
     public Set<K> keySet() {
         Set<K> set = new HashSet<>();
-        for (int i = 0; i < DEFAULT_SIZE; ++i) {
+        for (int i = 0; i < buckets.length; ++i) {
             ArrayMap<K, V> map = buckets[i];
             for (K key : map) {
                 set.add(key);
@@ -120,7 +120,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     @Override
     public V remove(K key) {
         ArrayMap<K, V> bucket = buckets[hash(key)];
-        V val = bucket.get(key);
+        V val = bucket.remove(key);
         if (val == null) {
             return null;
         }
