@@ -117,28 +117,46 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
+        int smallest = index;
 
-        if (inBounds(rightIndex(index))) {
-            if (contents[index].myPriority < contents[min(leftIndex(index), rightIndex(index))].myPriority) {
-                return;
-            }
-            if (contents[leftIndex(index)].myPriority < contents[rightIndex(index)].myPriority) {
-                swap(index, leftIndex(index));
-                sink(leftIndex(index));
-            } else {
-                swap(index, rightIndex(index));
-                sink(rightIndex(index));
-            }
-        } else if (inBounds(leftIndex(index))) {
-            if (contents[index].myPriority < contents[leftIndex(index)].myPriority) {
-                return;
-            }
-            swap(index, leftIndex(index));
-            sink(leftIndex(index));
-        } else {
-            return;
+        if (inBounds(leftIndex(index)) && contents[leftIndex(index)].myPriority < contents[smallest].myPriority) {
+            smallest = leftIndex(index);
+        }
+        if (inBounds(rightIndex(index)) && contents[rightIndex(index)].myPriority < contents[smallest].myPriority) {
+            smallest = rightIndex(index);
+        }
+        if (smallest != index) {
+            swap(index, smallest);
+            sink(smallest);
         }
     }
+//
+//    private void sink(int index) {
+//        // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
+//        validateSinkSwimArg(index);
+//
+//
+//        if (inBounds(rightIndex(index))) {
+//            if (contents[index].myPriority < contents[min(leftIndex(index), rightIndex(index))].myPriority) {
+//                return;
+//            }
+//            if (contents[leftIndex(index)].myPriority < contents[rightIndex(index)].myPriority) {
+//                swap(index, leftIndex(index));
+//                sink(leftIndex(index));
+//            } else {
+//                swap(index, rightIndex(index));
+//                sink(rightIndex(index));
+//            }
+//        } else if (inBounds(leftIndex(index))) {
+//            if (contents[index].myPriority < contents[leftIndex(index)].myPriority) {
+//                return;
+//            }
+//            swap(index, leftIndex(index));
+//            sink(leftIndex(index));
+//        } else {
+//            return;
+//        }
+//    }
 
     /**
      * Inserts an item with the given priority value. This is enqueue, or offer.
@@ -452,6 +470,26 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             assertEquals(expected[i], pq.removeMin());
             i += 1;
         }
+    }
+
+    @Test
+    public void testChangePriority() {
+        ExtrinsicPQ<String> pq = new ArrayHeap<>();
+        pq.insert("c", 3);
+        pq.insert("i", 9);
+        pq.insert("g", 7);
+        pq.insert("d", 4);
+        pq.insert("a", 1);
+        pq.insert("h", 8);
+        pq.insert("e", 5);
+        pq.insert("b", 2);
+        pq.insert("c", 3);
+        pq.insert("d", 4);
+
+        pq.changePriority("a", 114514);
+        pq.changePriority("h", 0);
+        assertEquals("h", pq.peek());
+        System.out.println(pq);
     }
 
 }
