@@ -13,7 +13,7 @@ public class Solver {
     private SearchNode s;
     private Map<WorldState, Integer> distTo;
     private Map<WorldState, Integer> estiDist;
-    int enqueue;
+    private int enqueue;
 
 
     private class SearchNode implements Comparable<SearchNode> {
@@ -40,9 +40,9 @@ public class Solver {
         }
 
         @Override
-        public int compareTo(SearchNode s) {
+        public int compareTo(SearchNode node) {
             int priority1 = this.move + this.estimatedDistanceToGoal();
-            int priority2 = s.move + s.estimatedDistanceToGoal();
+            int priority2 = node.move + node.estimatedDistanceToGoal();
             return Integer.compare(priority1, priority2);
         }
 

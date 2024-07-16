@@ -3,9 +3,7 @@ package hw4.puzzle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.swap;
-
-public class Board implements WorldState{
+public class Board implements WorldState {
 
     /** Returns the string representation of the board. 
       * Uncomment this method. */
@@ -102,6 +100,9 @@ public class Board implements WorldState{
             return true;
         }
         Board b = (Board) y;
+        if (this.size != b.size) {
+            return false;
+        }
         int N = this.size();
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
@@ -119,7 +120,7 @@ public class Board implements WorldState{
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }
