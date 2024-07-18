@@ -92,17 +92,19 @@ public class Rasterer {
         double newUllat = MapServer.ROOT_ULLAT + (-1) * startY * MapServer.TILE_SIZE * curLatDpp;
         results.put("raster_ul_lat", newUllat);
 
-        int nX = (int) w / MapServer.TILE_SIZE;
-        while (MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp < lrlon) {
-            nX += 1;
-        }
+//        int nX = (int) w / MapServer.TILE_SIZE;
+        int nX = (int) Math.ceil((lrlon - MapServer.ROOT_ULLON) / (MapServer.TILE_SIZE * curLonDpp) - startX);
+//        while (MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp <= lrlon) {
+//            nX += 1;
+//        }
         double newLrlon = MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp;
         results.put("raster_lr_lon", newLrlon);
 
-        int nY = (int) h / MapServer.TILE_SIZE;
-        while (MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp > lrlat) {
-            nY += 1;
-        }
+//        int nY = (int) h / MapServer.TILE_SIZE;
+        int nY = (int) Math.ceil((-lrlat + MapServer.ROOT_ULLAT) / (MapServer.TILE_SIZE * curLatDpp) - startY);
+//        while (MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp > lrlat) {
+//            nY += 1;
+//        }
         double newLrlat = MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp;
         results.put("raster_lr_lat", newLrlat);
 
