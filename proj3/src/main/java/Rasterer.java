@@ -55,7 +55,10 @@ public class Rasterer {
             results.put("query_success", false);
             return results;
         }
-
+        lrlon = Math.min(lrlon, MapServer.ROOT_LRLON);
+        lrlat = Math.max(lrlat, MapServer.ROOT_LRLAT);
+        ullon = Math.max(ullon, MapServer.ROOT_ULLON);
+        ullat = Math.min(ullat, MapServer.ROOT_ULLAT);
 
         /* Consider the lonDpp and latDpp of the tile */
         double basicLonDpp = -(MapServer.ROOT_ULLON - MapServer.ROOT_LRLON) / MapServer.TILE_SIZE;
@@ -74,17 +77,7 @@ public class Rasterer {
         }
         times *= 2;
         results.put("depth", depth);
-//
-//        int nY = (int) Math.ceil(h / MapServer.TILE_SIZE) + 1;
-//        int nX = (int) Math.ceil(w / MapServer.TILE_SIZE) + 1;
-//
-//        /* The minimal lonDpp and latDpp */
-//        double lonDpp = -(ullon - lrlon) / (nX * MapServer.TILE_SIZE);
-//        double latDpp = (ullat - lrlat) / (nY * MapServer.TILE_SIZE);
-//
-//
-//        int times = 64;
-//        int depth = 7;
+
         double curLonDpp = basicLonDpp / times;
         double curLatDpp = basicLatDpp / times;
 
@@ -99,14 +92,14 @@ public class Rasterer {
         double newUllat = MapServer.ROOT_ULLAT + (-1) * startY * MapServer.TILE_SIZE * curLatDpp;
         results.put("raster_ul_lat", newUllat);
 
-        int nX = 1;
+        int nX = (int) w / MapServer.TILE_SIZE;
         while (MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp < lrlon) {
             nX += 1;
         }
         double newLrlon = MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp;
         results.put("raster_lr_lon", newLrlon);
 
-        int nY = 1;
+        int nY = (int) h / MapServer.TILE_SIZE;
         while (MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp > lrlat) {
             nY += 1;
         }
