@@ -1,4 +1,7 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MergeSort {
     /**
@@ -34,8 +37,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> qoq = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> qOfItem = new Queue<>();
+            qOfItem.enqueue(item);
+            qoq.enqueue(qOfItem);
+        }
+        return qoq;
     }
 
     /**
@@ -54,13 +62,53 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> q = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            q.enqueue(getMin(q1, q2));
+        }
+        return q;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
+        Queue<Queue<Item>> qoq = makeSingleItemQueues(items);
+        while (qoq.size() > 1) {
+            Queue<Queue<Item>> newQoq = new Queue<>();
+            while (!qoq.isEmpty()) {
+                Queue<Item> q1 = qoq.dequeue();
+                if (qoq.isEmpty()) {
+                    newQoq.enqueue(q1);
+                } else {
+                    Queue<Item> q2 = qoq.dequeue();
+                    newQoq.enqueue(mergeSortedQueues(q1, q2));
+                }
+            }
+            qoq = newQoq;
+        }
+        items = qoq.dequeue();
         return items;
+    }
+
+    @Test
+    public void mergeSortTest() {
+        Queue<String> q = new Queue<>();
+        q.enqueue("eds");
+        q.enqueue("bds");
+        q.enqueue("qds");
+
+        Queue<String> target = new Queue<>();
+        target.enqueue("bds");
+        target.enqueue("eds");
+        target.enqueue("qds");
+        q = mergeSort(q);
+        for (int i = 0; i < 3; ++i) {
+            assertEquals(target.dequeue(), q.dequeue());
+        }
+
+    }
+    public static void main(String[] arg) {
+        MergeSort m = new MergeSort();
+        m.mergeSortTest();
     }
 }
