@@ -49,8 +49,8 @@ public class Rasterer {
         double ullon = params.get("ullon");
         double lrlat = params.get("lrlat");
         double lrlon = params.get("lrlon");
-        double w = params.get("w");
-        double h = params.get("h");
+        double w = Math.round(params.get("w"));
+        double h = Math.round(params.get("h"));
         if (w < 0 || h < 0 || !check(ullon, ullat, lrlon, lrlat)) {
             results.put("query_success", false);
             return results;
@@ -67,15 +67,14 @@ public class Rasterer {
         double queryLonDpp = -(ullon - lrlon) / w;
         double queryLatDpp = (ullat - lrlat) / h;
 
-        int times = 64;
-        int depth = 7;
-
-
-        while (basicLonDpp / times <= queryLonDpp && basicLatDpp / times <= queryLatDpp && times >= 1) {
-            depth -= 1;
-            times /= 2;
+        int depth = 0;
+        int times = 1;
+        for (depth = 0; depth < 7; ++depth) {
+            if (basicLonDpp / times <= queryLonDpp) {
+                break;
+            }
+            times *= 2;
         }
-        times *= 2;
         results.put("depth", depth);
 
         double curLonDpp = basicLonDpp / times;
@@ -92,26 +91,22 @@ public class Rasterer {
         double newUllat = MapServer.ROOT_ULLAT + (-1) * startY * MapServer.TILE_SIZE * curLatDpp;
         results.put("raster_ul_lat", newUllat);
 
-//        int nX = (int) w / MapServer.TILE_SIZE;
-        int nX = (int) Math.ceil((lrlon - MapServer.ROOT_ULLON) / (MapServer.TILE_SIZE * curLonDpp) - startX);
-//        while (MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp <= lrlon) {
-//            nX += 1;
-//        }
+        int nX = (int) Math.ceil((lrlon - MapServer.ROOT_ULLON)
+                / (MapServer.TILE_SIZE * curLonDpp) - startX);
         double newLrlon = MapServer.ROOT_ULLON + (startX + nX) * MapServer.TILE_SIZE * curLonDpp;
         results.put("raster_lr_lon", newLrlon);
 
-//        int nY = (int) h / MapServer.TILE_SIZE;
-        int nY = (int) Math.ceil((-lrlat + MapServer.ROOT_ULLAT) / (MapServer.TILE_SIZE * curLatDpp) - startY);
-//        while (MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp > lrlat) {
-//            nY += 1;
-//        }
-        double newLrlat = MapServer.ROOT_ULLAT + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp;
+        int nY = (int) Math.ceil((-lrlat + MapServer.ROOT_ULLAT)
+                / (MapServer.TILE_SIZE * curLatDpp) - startY);
+        double newLrlat = MapServer.ROOT_ULLAT
+                + (-1) * (startY + nY) * MapServer.TILE_SIZE * curLatDpp;
         results.put("raster_lr_lat", newLrlat);
 
         String[][] render = new String[nY][nX];
         for (int row = 0; row < nY; ++row) {
             for (int col = 0; col < nX; ++col) {
-                render[row][col] = String.format("d%d_x%d_y%d.png", depth, startX + col, startY + row);
+                render[row][col]
+                        = String.format("d%d_x%d_y%d.png", depth, startX + col, startY + row);
             }
         }
         results.put("render_grid", render);
