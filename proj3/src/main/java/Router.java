@@ -96,6 +96,9 @@ public class Router {
         long cur = t;
         List<Long> list = new ArrayList<>();
         while (cur != s) {
+            if (!prev.containsKey(cur)) {
+                break;
+            }
             list.add(0, cur);
             cur = prev.get(cur);
         }
