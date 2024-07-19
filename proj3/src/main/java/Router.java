@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +11,33 @@ import java.util.regex.Pattern;
  * down to the priority you use to order your vertices.
  */
 public class Router {
+
+    private static long s;
+    private static long t;
+    private static GraphDB graph;
+    private static double heuristic(long v) {
+        return graph.distance(v, t);
+    }
+
+    private static class State implements Comparable<State> {
+        private long to;
+        private double priority;
+        public State(long t, double p) {
+            to = t;
+            priority = p;
+        }
+
+        public int compareTo(State s) {
+            if (priority < s.priority) {
+                return -1;
+            } else if (priority == s.priority) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
     /**
      * Return a List of longs representing the shortest path from the node
      * closest to a start location and the node closest to the destination
@@ -25,7 +51,50 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+            s = g.closest(stlon, stlat);
+        t = g.closest(destlon, destlat);
+        graph = g;
+        Set<Long> closed = new HashSet<>();
+        HashMap<Long, Double> dis = new HashMap<>();
+        HashMap<Long, Long> prev = new HashMap<>();
+        PriorityQueue<State> queue = new PriorityQueue<>();
+        State state = new State(s, 0D + heuristic(s));
+        queue.add(state);
+        dis.put(s, 0D);
+        prev.put(s,s);
+        while (!queue.isEmpty()) {
+            State cur = queue.remove();
+            if (cur.to == t) {
+                break;
+            }
+            if (closed.contains(cur.to)) {
+                continue;
+            }
+            closed.add(cur.to);
+            for (long to : graph.adjacent(cur.to)) {
+                if (!closed.contains(to)) {
+                    double originDis = Double.MAX_VALUE;
+                    if (dis.containsKey(to)) {
+                        originDis = dis.get(to);
+                    }
+                    double newDis = dis.get(cur.to) + graph.distance(to, cur.to);
+                    if (originDis > newDis) {
+                        dis.put(to, newDis);
+                        prev.put(to, cur.to);
+                        State newState = new State(to, newDis + heuristic(to));
+                        queue.add(newState);
+                    }
+                }
+            }
+        }
+        long cur = t;
+        List<Long> list = new ArrayList<>();
+        while (cur != prev.get(cur)) {
+            list.add(cur);
+            cur = prev.get(cur);
+        }
+        list.add(cur);
+        return list;
     }
 
     /**
