@@ -9,7 +9,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -143,7 +143,7 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        // Your code here.
         List<Long> delete = new ArrayList<>();
         for (Long key : nodes.keySet()) {
             if (degrees.containsKey(key) && degrees.get(key) == 0) {

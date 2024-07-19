@@ -1,4 +1,10 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,10 +33,10 @@ public class Router {
             priority = p;
         }
 
-        public int compareTo(State s) {
-            if (priority < s.priority) {
+        public int compareTo(State state) {
+            if (priority < state.priority) {
                 return -1;
-            } else if (priority == s.priority) {
+            } else if (priority == state.priority) {
                 return 0;
             } else {
                 return 1;
@@ -61,7 +67,7 @@ public class Router {
         State state = new State(s, 0D + heuristic(s));
         queue.add(state);
         dis.put(s, 0D);
-        prev.put(s,s);
+        prev.put(s, s);
         while (!queue.isEmpty()) {
             State cur = queue.remove();
             if (cur.to == t) {
@@ -89,7 +95,7 @@ public class Router {
         }
         long cur = t;
         List<Long> list = new ArrayList<>();
-        while (cur != prev.get(cur)) {
+        while (cur != s) {
             list.add(0, cur);
             cur = prev.get(cur);
         }
