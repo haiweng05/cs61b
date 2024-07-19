@@ -7,6 +7,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -20,6 +23,85 @@ import java.util.ArrayList;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
+    public static class Node {
+        private long id;
+        private double lat;
+        private double lon;
+        private String name;
+        public Node(long id, double lat, double lon) {
+            this.id = id;
+            this.lat = lat;
+            this.lon = lon;
+        }
+
+        public void setName(String str) {
+            this.name = str;
+        }
+    }
+
+    public static class Edge {
+        private static int startId = 0;
+        private long id;
+        private long from;
+        private long to;
+        private double len;
+//        private boolean activate;
+//        private int[] refs;
+        public Edge(long from, long to) {
+            this.id = startId;
+            startId += 1;
+            this.from = from;
+            this.to = to;
+        }
+    }
+
+    public static class Road {
+        private List<Long> nodes;
+        private long id;
+        private String type;
+        private String name;
+        private String speed;
+        public Road(long id) {
+            this.id = id;
+            nodes = new ArrayList<>();
+        }
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getSpeed() {
+            return speed;
+        }
+        public void setSpeed(String speed) {
+            this.speed = speed;
+        }
+        public long getNode(int idx) {
+            return nodes.get(idx);
+        }
+
+        public void addNode(long id) {
+            nodes.add(id);
+        }
+        public int size() {
+            return nodes.size();
+        }
+    }
+
+    HashMap<Long, Node> nodes;
+    HashMap<Long, Edge> edges;
+    HashMap<Long, Long> degrees;
+    HashMap<Long, List<Long>> adj;
+
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -27,6 +109,10 @@ public class GraphDB {
      * @param dbPath Path to the XML file to be parsed.
      */
     public GraphDB(String dbPath) {
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
+        adj = new HashMap<>();
+        degrees = new HashMap<>();
         try {
             File inputFile = new File(dbPath);
             FileInputStream inputStream = new FileInputStream(inputFile);
@@ -58,6 +144,17 @@ public class GraphDB {
      */
     private void clean() {
         // TODO: Your code here.
+        List<Long> delete = new ArrayList<>();
+        for (Long key : nodes.keySet()) {
+            if (degrees.containsKey(key) && degrees.get(key) == 0) {
+                delete.add(key);
+            }
+        }
+        for (Long key : delete) {
+            nodes.remove(key);
+            adj.remove(key);
+            degrees.remove(key);
+        }
     }
 
     /**
@@ -66,7 +163,7 @@ public class GraphDB {
      */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return nodes.keySet();
     }
 
     /**
@@ -75,7 +172,7 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        return adj.get(v);
     }
 
     /**
@@ -136,7 +233,16 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        double min = Double.MAX_VALUE;
+        long minIdx = 0;
+        for (long v : vertices()) {
+            double dis = distance(lon(v), lat(v), lon, lat);
+            if (min > dis) {
+                min = dis;
+                minIdx = v;
+            }
+        }
+        return minIdx;
     }
 
     /**
@@ -145,7 +251,7 @@ public class GraphDB {
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        return nodes.get(v).lon;
     }
 
     /**
@@ -154,6 +260,40 @@ public class GraphDB {
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        return nodes.get(v).lat;
+    }
+
+    void addNode(Node n) {
+        if (!degrees.containsKey(n.id)) {
+            degrees.put(n.id, 0L);
+        }
+        nodes.put(n.id, n);
+    }
+
+    void addEdge(Edge e) {
+
+    }
+
+    void addEdge(long from, long to) {
+        if (!this.adj.containsKey(from)) {
+            this.adj.put(from, new ArrayList<>());
+        }
+        if (!this.adj.containsKey(to)) {
+            this.adj.put(to, new ArrayList<>());
+        }
+        this.adj.get(from).add(to);
+        this.adj.get(to).add(from);
+
+        addDegree(from);
+        addDegree(to);
+    }
+
+    void addDegree(long v) {
+        if (!degrees.containsKey(v)) {
+            degrees.put(v, 0L);
+        } else {
+            long degree = degrees.get(v) + 1L;
+            degrees.put(v, degree);
+        }
     }
 }
