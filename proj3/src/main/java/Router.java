@@ -51,7 +51,7 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-            s = g.closest(stlon, stlat);
+        s = g.closest(stlon, stlat);
         t = g.closest(destlon, destlat);
         graph = g;
         Set<Long> closed = new HashSet<>();
@@ -90,10 +90,10 @@ public class Router {
         long cur = t;
         List<Long> list = new ArrayList<>();
         while (cur != prev.get(cur)) {
-            list.add(cur);
+            list.add(0, cur);
             cur = prev.get(cur);
         }
-        list.add(cur);
+        list.add(0, cur);
         return list;
     }
 

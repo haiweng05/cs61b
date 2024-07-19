@@ -89,8 +89,8 @@ public class GraphDB {
             return nodes.get(idx);
         }
 
-        public void addNode(long id) {
-            nodes.add(id);
+        public void addNode(long idx) {
+            nodes.add(idx);
         }
         public int size() {
             return nodes.size();
