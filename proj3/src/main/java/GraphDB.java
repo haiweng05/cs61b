@@ -9,6 +9,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -265,4 +266,136 @@ public class GraphDB {
         this.adj.get(to).add(from);
     }
 
+
+
+    public static class Trie {
+        private class TrieNode {
+            TrieNode[] next;
+            Character c;
+            String val;
+
+            TrieNode(char a) {
+                c = a;
+                next = new TrieNode[27];
+            }
+        }
+        TrieNode[] root;
+
+        Trie() {
+            root = new TrieNode[27];
+        }
+
+        private int getIndex(char a) {
+            if (a == ' ') {
+                return 0;
+            } else {
+                return a - 'a' + 1;
+            }
+        }
+        public void add(String str) {
+            TrieNode cur = null;
+            String ori = str;
+            str = GraphDB.cleanString(str);
+            for (char ch : str.toCharArray()) {
+                if (cur == null) {
+                    if (root[getIndex(ch)] == null) {
+                        root[getIndex(ch)] = new TrieNode(ch);
+                    }
+                    cur = root[getIndex(ch)];
+                } else {
+                    if (cur.next[getIndex(ch)] == null) {
+                        cur.next[getIndex(ch)] = new TrieNode(ch);
+                    }
+                    cur = cur.next[getIndex(ch)];
+                }
+            }
+            if (cur != null) {
+                cur.val = ori;
+            }
+        }
+
+        public List<String> find(String str) {
+            TrieNode cur = null;
+            str = GraphDB.cleanString(str);
+            for (char ch : str.toCharArray()) {
+                if (ch != ' ' && !Character.isLowerCase(ch)) {
+                    continue;
+                }
+                if (cur == null) {
+                    if (root[getIndex(ch)] == null) {
+                        return new ArrayList<>();
+                    }
+                    cur = root[getIndex(ch)];
+                } else {
+                    if (cur.next[getIndex(ch)] == null) {
+                        return new ArrayList<>();
+                    }
+                    cur = cur.next[getIndex(ch)];
+                }
+            }
+
+            List<String> lst = new ArrayList<>();
+            lst = yieldFrom(cur);
+            return lst;
+        }
+
+        private List<String> yieldFrom(TrieNode n) {
+            List<String> lst = new ArrayList<>();
+            if (n.val != null) {
+                lst.add(n.val);
+            }
+            for (int i = 0; i < 27; ++i) {
+                if (n.next[i] != null) {
+                    lst.addAll(yieldFrom(n.next[i]));
+                }
+            }
+            return lst;
+        }
+    }
+
+    private static boolean trieBuilt = false;
+    private static Trie trie;
+    /**
+     * In linear time, collect all the names of OSM locations that prefix-match the query string.
+     * @param prefix Prefix string to be searched for. Could be any case, with our without
+     *               punctuation.
+     * @return A <code>List</code> of the full names of locations whose cleaned name matches the
+     * cleaned <code>prefix</code>.
+     */
+    public List<String> getLocationsByPrefix(String prefix) {
+        if (!trieBuilt) {
+            buildTrie();
+            trieBuilt = true;
+        }
+        return trie.find(prefix);
+    }
+
+    private void buildTrie() {
+        trie = new Trie();
+        for (long l : vertices()) {
+            GraphDB.Node n = nodes.get(l);
+            String name = n.getName();
+            if (name != null) {
+                trie.add(name);
+            }
+        }
+    }
+    public List<Map<String, Object>> getLocations(String locationName) {
+        locationName = GraphDB.cleanString(locationName);
+        List<Long> positions = name2Idx.get(locationName);
+        if (positions == null) {
+            return null;
+        }
+        List<Map<String, Object>> lst = new ArrayList<>();
+        for (long l : positions) {
+            Node n = nodes.get(l);
+            Map<String, Object> map = new HashMap<>();
+            map.put("lat", lat(l));
+            map.put("lon", lon(l));
+            map.put("name", n.getName());
+            map.put("id", l);
+            lst.add(map);
+        }
+        return lst;
+    }
 }
