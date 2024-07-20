@@ -132,6 +132,7 @@ public class GraphDB {
         for (Long key : nodes.keySet()) {
             if (adjacent(key) == null) {
                 delete.add(key);
+//                System.out.println(nodes.get(key).name);
             }
         }
         for (Long key : delete) {
@@ -250,6 +251,9 @@ public class GraphDB {
 
     void addNode(Node n) {
         nodes.put(n.id, n);
+        if (n.name != null && n.name.equals("Montano Velo")) {
+            System.out.println("get!");
+        }
     }
 
     void addEdge(long from, long to) {
@@ -268,8 +272,8 @@ public class GraphDB {
     public static class Trie {
         private class TrieNode {
             TrieNode[] next;
-            Character c;
-            String val;
+            char c;
+            List<String> val;
 
             TrieNode(char a) {
                 c = a;
@@ -307,7 +311,10 @@ public class GraphDB {
                 }
             }
             if (cur != null) {
-                cur.val = ori;
+                if (cur.val == null) {
+                    cur.val = new ArrayList<>();
+                }
+                cur.val.add(ori);
             }
         }
 
@@ -340,7 +347,7 @@ public class GraphDB {
         private TreeSet<String> yieldFrom(TrieNode n) {
             TreeSet<String> lst = new TreeSet<>();
             if (n.val != null) {
-                lst.add(n.val);
+                lst.addAll(n.val);
             }
             for (int i = 0; i < 27; ++i) {
                 if (n.next[i] != null) {
@@ -365,15 +372,20 @@ public class GraphDB {
             buildTrie();
             trieBuilt = true;
         }
-        return trie.find(prefix);
+        List<String> lst = trie.find(prefix);
+        System.out.println(lst);
+        return lst;
     }
 
     private void buildTrie() {
         trie = new Trie();
         for (long l : vertices()) {
-            GraphDB.Node n = nodes.get(l);
+            Node n = nodes.get(l);
             String name = n.getName();
             if (name != null) {
+                if (name.equals("Montano Velo")) {
+                    System.out.println("get!");
+                }
                 trie.add(name);
             }
         }

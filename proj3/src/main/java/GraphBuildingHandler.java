@@ -126,6 +126,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* While looking at a node, we found a <tag...> with k="name". */
             /* Create a location. */
             String name = attributes.getValue("v");
+
             g.nodes.get(curId).setName(name);
             String cleanedName = GraphDB.cleanString(name);
             if (!g.name2Idx.containsKey(cleanedName)) {
