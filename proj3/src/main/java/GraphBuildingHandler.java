@@ -2,6 +2,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -124,7 +125,13 @@ public class GraphBuildingHandler extends DefaultHandler {
                 .equals("name")) {
             /* While looking at a node, we found a <tag...> with k="name". */
             /* Create a location. */
-            g.nodes.get(curId).setName(attributes.getValue("name"));
+            String name = attributes.getValue("v");
+            g.nodes.get(curId).setName(name);
+            String cleanedName = GraphDB.cleanString(name);
+            if (!g.name2Idx.containsKey(cleanedName)) {
+                g.name2Idx.put(cleanedName, new ArrayList<>());
+            }
+            g.name2Idx.get(cleanedName).add(curId);
             /* Hint: Since we found this <tag...> INSIDE a node, we should probably remember which
             node this tag belongs to. Remember XML is parsed top-to-bottom, so probably it's the
             last node that you looked at (check the first if-case). */

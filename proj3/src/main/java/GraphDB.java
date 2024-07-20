@@ -37,21 +37,9 @@ public class GraphDB {
         public void setName(String str) {
             this.name = str;
         }
-    }
 
-    public static class Edge {
-        private static int startId = 0;
-        private long id;
-        private long from;
-        private long to;
-        private double len;
-//        private boolean activate;
-//        private int[] refs;
-        public Edge(long from, long to) {
-            this.id = startId;
-            startId += 1;
-            this.from = from;
-            this.to = to;
+        public String getName() {
+            return name;
         }
     }
 
@@ -98,9 +86,8 @@ public class GraphDB {
     }
 
     HashMap<Long, Node> nodes;
-    HashMap<Long, Edge> edges;
-    HashMap<Long, Long> degrees;
     HashMap<Long, List<Long>> adj;
+    HashMap<String, List<Long>> name2Idx;
 
 
     /**
@@ -110,9 +97,8 @@ public class GraphDB {
      */
     public GraphDB(String dbPath) {
         nodes = new HashMap<>();
-        edges = new HashMap<>();
         adj = new HashMap<>();
-        degrees = new HashMap<>();
+        name2Idx = new HashMap<>();
         try {
             File inputFile = new File(dbPath);
             FileInputStream inputStream = new FileInputStream(inputFile);
@@ -146,14 +132,12 @@ public class GraphDB {
         // Your code here.
         List<Long> delete = new ArrayList<>();
         for (Long key : nodes.keySet()) {
-            if (degrees.containsKey(key) && degrees.get(key) == 0) {
+            if (adjacent(key) == null) {
                 delete.add(key);
             }
         }
         for (Long key : delete) {
-            nodes.remove(key);
             adj.remove(key);
-            degrees.remove(key);
         }
     }
 
@@ -236,6 +220,9 @@ public class GraphDB {
         double min = Double.MAX_VALUE;
         long minIdx = 0;
         for (long v : vertices()) {
+            if (adjacent(v) == null) {
+                continue;
+            }
             double dis = distance(lon(v), lat(v), lon, lat);
             if (min > dis) {
                 min = dis;
@@ -264,14 +251,7 @@ public class GraphDB {
     }
 
     void addNode(Node n) {
-        if (!degrees.containsKey(n.id)) {
-            degrees.put(n.id, 0L);
-        }
         nodes.put(n.id, n);
-    }
-
-    void addEdge(Edge e) {
-
     }
 
     void addEdge(long from, long to) {
@@ -283,17 +263,6 @@ public class GraphDB {
         }
         this.adj.get(from).add(to);
         this.adj.get(to).add(from);
-
-        addDegree(from);
-        addDegree(to);
     }
 
-    void addDegree(long v) {
-        if (!degrees.containsKey(v)) {
-            degrees.put(v, 0L);
-        } else {
-            long degree = degrees.get(v) + 1L;
-            degrees.put(v, degree);
-        }
-    }
 }
