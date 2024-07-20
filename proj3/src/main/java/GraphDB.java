@@ -6,10 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -333,15 +330,16 @@ public class GraphDB {
                     cur = cur.next[getIndex(ch)];
                 }
             }
+            Set<String> set = new TreeSet<>();
+            set = yieldFrom(cur);
 
-            List<String> lst = new ArrayList<>();
-            lst = yieldFrom(cur);
+            List<String> lst = new ArrayList<>(set);
             return lst;
         }
 
-        private List<String> yieldFrom(TrieNode n) {
-            List<String> lst = new ArrayList<>();
-            if (n.val != null && !lst.contains(n.val)) {
+        private TreeSet<String> yieldFrom(TrieNode n) {
+            TreeSet<String> lst = new TreeSet<>();
+            if (n.val != null) {
                 lst.add(n.val);
             }
             for (int i = 0; i < 27; ++i) {
