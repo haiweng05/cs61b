@@ -341,7 +341,7 @@ public class GraphDB {
 
         private List<String> yieldFrom(TrieNode n) {
             List<String> lst = new ArrayList<>();
-            if (n.val != null) {
+            if (n.val != null && !lst.contains(n.val)) {
                 lst.add(n.val);
             }
             for (int i = 0; i < 27; ++i) {
