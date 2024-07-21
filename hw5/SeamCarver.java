@@ -7,7 +7,7 @@ public class SeamCarver {
     private int width;
     private int height;
     public SeamCarver(Picture picture) {
-        this.picture = picture;
+        this.picture = new Picture(picture);
         this.width = picture.width();
         this.height = picture.height();
     }
@@ -150,18 +150,7 @@ public class SeamCarver {
                 throw new java.lang.IllegalArgumentException();
             }
         }
-
-        Picture p = new Picture(width, height - 1);
-        for (int i = 0; i < width; ++i) {
-            int y = 0;
-            for (int j = 0; j < height; ++j) {
-                if (seam[i] != j) {
-                    p.set(i, y, picture.get(i, j));
-                    y += 1;
-                }
-            }
-        }
-        picture = p;
+        picture = SeamRemover.removeHorizontalSeam(picture, seam);
         height -= 1;
     }
     // remove vertical seam from picture
@@ -171,19 +160,7 @@ public class SeamCarver {
                 throw new java.lang.IllegalArgumentException();
             }
         }
-
-        Picture p = new Picture(width - 1, height);
-        for (int j = 0; j < height; ++j) {
-            int x = 0;
-            for (int i = 0; i < width; ++i) {
-                if (seam[j] != i) {
-                    p.set(x, j, picture.get(i, j));
-                    x += 1;
-                }
-            }
-        }
-
-        picture = p;
+        picture = SeamRemover.removeVerticalSeam(picture, seam);
         width -= 1;
     }
 }
