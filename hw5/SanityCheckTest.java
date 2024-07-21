@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.Picture;
 import java.awt.Color;
-import java.util.Arrays;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 
 public class SanityCheckTest {
