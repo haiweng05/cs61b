@@ -373,7 +373,7 @@ public class GraphDB {
             trieBuilt = true;
         }
         List<String> lst = trie.find(prefix);
-        System.out.println(lst);
+//        System.out.println(lst);
         return lst;
     }
 
@@ -383,9 +383,6 @@ public class GraphDB {
             Node n = nodes.get(l);
             String name = n.getName();
             if (name != null) {
-                if (name.equals("Montano Velo")) {
-                    System.out.println("get!");
-                }
                 trie.add(name);
             }
         }
