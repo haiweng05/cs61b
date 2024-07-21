@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.Color;
 
 import edu.princeton.cs.algs4.Picture;
 
@@ -13,7 +13,7 @@ public class SeamCarver {
     }
     // current picture
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }
     // width of current picture
     public int width() {
@@ -30,15 +30,15 @@ public class SeamCarver {
         }
         Color left = picture.get(left(x), y);
         Color right = picture.get(right(x), y);
-        int energyX = (left.getRed() - right.getRed()) * (left.getRed() - right.getRed()) +
-                (left.getBlue() - right.getBlue()) * (left.getBlue() - right.getBlue()) +
-                (left.getGreen() - right.getGreen()) * (left.getGreen() - right.getGreen());
+        int energyX = (left.getRed() - right.getRed()) * (left.getRed() - right.getRed())
+                + (left.getBlue() - right.getBlue()) * (left.getBlue() - right.getBlue())
+                + (left.getGreen() - right.getGreen()) * (left.getGreen() - right.getGreen());
 
         Color up = picture.get(x, up(y));
         Color down = picture.get(x, down(y));
-        int energyY = (up.getRed() - down.getRed()) * (up.getRed() - down.getRed()) +
-                (up.getBlue() - down.getBlue()) * (up.getBlue() - down.getBlue()) +
-                (up.getGreen() - down.getGreen()) * (up.getGreen() - down.getGreen());
+        int energyY = (up.getRed() - down.getRed()) * (up.getRed() - down.getRed())
+                + (up.getBlue() - down.getBlue()) * (up.getBlue() - down.getBlue())
+                + (up.getGreen() - down.getGreen()) * (up.getGreen() - down.getGreen());
 
         return energyX + energyY;
     }
