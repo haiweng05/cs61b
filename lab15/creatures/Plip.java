@@ -5,8 +5,11 @@ import huglife.Action;
 import huglife.Occupant;
 import huglife.HugLifeUtils;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
+import java.util.Random;
+import java.util.zip.DeflaterInputStream;
 
 /** An implementation of a motile pacifist photosynthesizer.
  *  @author Josh Hug
@@ -20,13 +23,16 @@ public class Plip extends Creature {
     /** blue color. */
     private int b;
 
+    private Random random;
+
     /** creates plip with energy equal to E. */
     public Plip(double e) {
         super("plip");
-        r = 0;
+        r = 99;
         g = 0;
-        b = 0;
+        b = 76;
         energy = e;
+        random = new Random();
     }
 
     /** creates a plip with energy equal to 1. */
@@ -42,7 +48,7 @@ public class Plip extends Creature {
      *  that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        g = (int) (63 + (255 - 63) * energy / 2);
         return color(r, g, b);
     }
 
@@ -55,11 +61,19 @@ public class Plip extends Creature {
      *  private static final variable. This is not required for this lab.
      */
     public void move() {
+        energy -= 0.15d;
+        if (energy < 0d) {
+            energy = 0d;
+        }
     }
 
 
     /** Plips gain 0.2 energy when staying due to photosynthesis. */
     public void stay() {
+        energy += 0.2d;
+        if (energy > 2d) {
+            energy = 2.0d;
+        }
     }
 
     /** Plips and their offspring each get 50% of the energy, with none
@@ -67,7 +81,9 @@ public class Plip extends Creature {
      *  Plip.
      */
     public Plip replicate() {
-        return this;
+        Plip p = new Plip(energy / 2);
+        energy /= 2;
+        return p;
     }
 
     /** Plips take exactly the following actions based on NEIGHBORS:
@@ -81,7 +97,52 @@ public class Plip extends Creature {
      *  for an example to follow.
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
-        return new Action(Action.ActionType.STAY);
+        String left = neighbors.get(Direction.LEFT).name();
+        String right = neighbors.get(Direction.RIGHT).name();
+        String up = neighbors.get(Direction.TOP).name();
+        String down = neighbors.get(Direction.BOTTOM).name();
+
+        boolean leftPass = left.equals("empty");
+        boolean rightPass = right.equals("empty");
+        boolean upPass = up.equals("empty");
+        boolean downPass = down.equals("empty");
+        List<Direction> listEmpty = new ArrayList<>();
+        if (leftPass) {
+            listEmpty.add(Direction.LEFT);
+        }
+        if (rightPass) {
+            listEmpty.add(Direction.RIGHT);
+        }
+        if (upPass) {
+            listEmpty.add(Direction.TOP);
+        }
+        if (downPass) {
+            listEmpty.add(Direction.BOTTOM);
+        }
+
+        if (listEmpty.isEmpty()) {
+            return new Action(Action.ActionType.STAY);
+        } else if (energy > 1.0d && !listEmpty.isEmpty()) {
+            Direction d = listEmpty.get(random.nextInt(0, listEmpty.size()));
+            return new Action(Action.ActionType.REPLICATE, d);
+        } else {
+            boolean leftClorus = left.equals("clorus");
+            boolean rightClorus = right.equals("clorus");
+            boolean upClorus = up.equals("clorus");
+            boolean downClorus = down.equals("clorus");
+
+            if (leftClorus || rightClorus || upClorus || downClorus) {
+                double r = random.nextGaussian();
+                if (r < 0.5d && !listEmpty.isEmpty()) {
+                    return new Action(Action.ActionType.STAY);
+                } else {
+                    Direction d = listEmpty.get(random.nextInt(0, listEmpty.size()));
+                    return new Action(Action.ActionType.MOVE, d);
+                }
+            } else {
+                return new Action(Action.ActionType.STAY);
+            }
+        }
     }
 
 }

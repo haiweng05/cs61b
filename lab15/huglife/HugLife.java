@@ -119,9 +119,9 @@ public class HugLife {
             int y = in.readInt();
             switch (creature) {
                 //Uncomment this when you're ready to test out your clorus class
-                // case "clorus":
-                //     h.addCreature(x, y, new Clorus(1));
-                //     break;
+                 case "clorus":
+                     h.addCreature(x, y, new Clorus(1));
+                     break;
                 case "plip":
                     h.addCreature(x, y, new Plip());
                     break;
@@ -140,7 +140,7 @@ public class HugLife {
             return;
         }
         HugLife h = readWorld(args[0]);
-        // HugLife h = new HugLife(WORLD_SIZE);
+//        HugLife h = new HugLife(WORLD_SIZE);
         // h.initialize(args[0]); DON'T USE ME
 
         if (SIMULATE_BY_CYCLE) {
