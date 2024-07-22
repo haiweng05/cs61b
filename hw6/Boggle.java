@@ -38,8 +38,6 @@ public class Boggle {
         }
 
         public void add(String str) {
-            String ori = str;
-            str = str.toLowerCase();
             TrieNode cur = null;
             for (char chr : str.toCharArray()) {
                 if (chr - 'a' >= 26) {
@@ -58,7 +56,7 @@ public class Boggle {
                 }
             }
             if (cur != null) {
-                cur.val = ori;
+                cur.val = str;
             }
         }
     }
@@ -96,11 +94,16 @@ public class Boggle {
         In dictFile = new In(dictPath);
         trie = new Trie();
         while (!dictFile.isEmpty()) {
+            boolean flag = true;
             String str = dictFile.readString();
-            if (str.contains("'")) {
-                continue;
+            for (char chr : str.toCharArray()) {
+                if (!Character.isLowerCase(chr)) {
+                    flag = false;
+                }
             }
-            trie.add(str);
+            if (flag) {
+                trie.add(str);
+            }
         }
         limit = k;
         Comparator<String> mcp = new MyComparator();
@@ -110,10 +113,8 @@ public class Boggle {
                 vis = new boolean[N][M];
                 vis[i][j] = true;
                 Trie.TrieNode n = trie.root[board[i].charAt(j) - 'a'];
-                if (n.val() != null) {
-                    pq.add(n.val());
-                    n.removeVal();
-                    keepSize();
+                if (n == null) {
+                    continue;
                 }
                 dfs(i, j, n);
                 vis[i][j] = false;
@@ -135,7 +136,7 @@ public class Boggle {
             if (n.next[c - 'a'] != null) {
                 vis[x + DX[i]][y + DY[i]] = true;
                 Trie.TrieNode next = n.next[c - 'a'];
-                if (next.val() != null) {
+                if (next.val() != null && next.val().length() >= 3) {
                     pq.add(next.val());
                     next.removeVal();
                     keepSize();
