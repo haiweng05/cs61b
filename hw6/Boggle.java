@@ -97,7 +97,7 @@ public class Boggle {
             boolean flag = true;
             String str = dictFile.readString();
             for (char chr : str.toCharArray()) {
-                if (!Character.isLowerCase(chr)) {
+                if (chr < 'a' || chr > 'z') {
                     flag = false;
                 }
             }
