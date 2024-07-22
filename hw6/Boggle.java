@@ -1,7 +1,7 @@
-import org.junit.Test;
-
-import java.sql.Time;
-import java.util.*;
+import java.util.PriorityQueue;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Boggle {
     private static int M;
@@ -10,8 +10,8 @@ public class Boggle {
     private static boolean[][] vis;
     private static Trie trie;
     private static PriorityQueue<String> pq;
-    private static final int[] dx = {1, -1, 0, 0, 1, 1, -1, -1};
-    private static final int[] dy = {0, 0, 1, -1, -1, 1, -1, 1};
+    private static final int[] DX = {1, -1, 0, 0, 1, 1, -1, -1};
+    private static final int[] DY = {0, 0, 1, -1, -1, 1, -1, 1};
     private static int limit;
 
     public static class Trie {
@@ -63,16 +63,6 @@ public class Boggle {
         }
     }
 
-    private static class State {
-        public int x;
-        public int y;
-        public Trie.TrieNode node;
-        public State(int x, int y, Trie.TrieNode n) {
-            this.x = x;
-            this.y = y;
-            node = n;
-        }
-    }
     // File path of dictionary file
     static String dictPath = "words.txt";
 
@@ -131,9 +121,9 @@ public class Boggle {
         }
         List<String> result = new ArrayList<>();
         while (!pq.isEmpty()) {
-            result.add(pq.remove());
+            result.add(0, pq.remove());
         }
-        return result.reversed();
+        return result;
     }
 
     private static void dfs(int x, int y, Trie.TrieNode n) {
@@ -143,22 +133,22 @@ public class Boggle {
                 continue;
             }
             if (n.next[c - 'a'] != null) {
-                vis[x + dx[i]][y + dy[i]] = true;
+                vis[x + DX[i]][y + DY[i]] = true;
                 Trie.TrieNode next = n.next[c - 'a'];
                 if (next.val() != null) {
                     pq.add(next.val());
                     next.removeVal();
                     keepSize();
                 }
-                dfs(x + dx[i], y + dy[i], next);
-                vis[x + dx[i]][y + dy[i]] = false;
+                dfs(x + DX[i], y + DY[i], next);
+                vis[x + DX[i]][y + DY[i]] = false;
             }
         }
     }
 
     private static char charAt(int x, int y, int bearing) {
-        x = x + dx[bearing];
-        y = y + dy[bearing];
+        x = x + DX[bearing];
+        y = y + DY[bearing];
 
         if (x < 0 || x >= N || y < 0 || y >= M || vis[x][y]) {
             return ' ';
@@ -172,11 +162,11 @@ public class Boggle {
             pq.remove();
         }
     }
-
-    public static void main(String[] arg) {
-        long startTime = System.currentTimeMillis();
-        System.out.println(solve(Integer.parseInt(arg[0]), arg[1]));
-        long endTime = System.currentTimeMillis();
-        System.out.println("Total time: %d".formatted(endTime - startTime));
-    }
+//
+//    public static void main(String[] arg) {
+//        long startTime = System.currentTimeMillis();
+//        System.out.println(solve(Integer.parseInt(arg[0]), arg[1]));
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Total time: %d".formatted(endTime - startTime));
+//    }
 }
